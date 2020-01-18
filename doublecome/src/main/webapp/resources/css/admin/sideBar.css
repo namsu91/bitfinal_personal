@@ -1,0 +1,88 @@
+html, body {
+	margin: 0;
+	height: 100%;
+}
+
+body {
+	overflow: scroll;
+}
+
+.adminPage {
+	width: 100%;
+	height: 100%;
+	min-width: max-content;
+	min-height: max-content;
+	background: white;
+	display: flex;
+}
+
+.adminPage>div:first-of-type {
+	height: max-content;
+	min-height: 100%;
+	width: 200px;
+	background: white;
+	border-right: 1px solid rgb(117, 117, 117);
+}
+
+.adminSideItem>div {
+	width: 100%;
+	height: 50px;
+	color: black;
+	font-size: 13px;
+	border-bottom: 1px solid rgb(200, 200, 200);
+	background: white;
+	display: none;
+}
+
+.adminSideItem>div:first-of-type {
+	color: black;
+	background: white;
+	display: block;
+}
+
+.adminSideItem>div>p {
+	margin-left: 30px;
+	float: left;
+}
+
+.adminSideItem>div:first-of-type>p {
+	margin-left: 0px;
+	float: left;
+}
+
+/*   */
+.adminSideItem>div:first-of-type>svg {
+	float: right;
+	margin-right: 10px;
+	position: relative;
+	top: 16px;
+}
+
+.adminSideItem>div:first-of-type>svg:nth-child(1) {
+	float: left;
+	position: relative;
+	top: 16px;
+	margin-left: 10px;
+}
+
+.adminSideItem>div:hover {
+	background: rgb(238, 238, 238) !important;
+}
+
+.clicked {
+	border-left: 8px solid rgb(243, 104, 104);
+	background: rgba(238, 238, 238, 0.582) !important;
+	box-sizing: border-box;
+	color: black !important;
+	font-weight: bold;
+}
+
+.selected {
+	background: rgb(238, 238, 238) !important;
+}
+
+.adminContent {
+	width: 1200px;
+	height: 100%;
+	margin: auto;
+}

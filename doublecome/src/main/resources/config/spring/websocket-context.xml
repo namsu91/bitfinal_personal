@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+      					  http://www.springframework.org/schema/beans/spring-beans.xsd
+            			  http://www.springframework.org/schema/websocket
+            			  http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+        
+        
+        
+        <websocket:handlers>
+        	<websocket:mapping handler="messenger" path="/chatting.do"/>
+        	<websocket:mapping handler="LiveAuctionChatHandler" path="/chat.do"/>
+        	<websocket:mapping handler="LiveAuctionBidHandler" path="/bid.do"/>
+        	<websocket:handshake-interceptors>
+        		<bean class="kr.co.doublecome.util.interceptor.HandShakeInterceptor"/>
+        	</websocket:handshake-interceptors>
+        </websocket:handlers>
+        
+        <bean class="org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean">
+        	<property name="maxTextMessageBufferSize" value="8192"/>
+        	<property name="maxBinaryMessageBufferSize" value="819200"/>
+        </bean>    	
+        
+        		  
+</beans>

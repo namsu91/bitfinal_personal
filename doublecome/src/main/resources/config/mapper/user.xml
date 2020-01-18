@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.doublecome.repository.mapper.UserMapper">
+	
+	<!-- 이메일과 비밀번호로 회원 조회 -->
+	<select id="selectUserInfo" parameterType="User" resultType="User">
+		select * 
+		  from user
+		 where user_email = #{userEmail}
+		   and user_pass = #{userPass}
+	</select>
+	<!-- 이메일로 회원 조회  -->
+	<select id="selectUserInfoByName" parameterType="string" resultType="User">
+		<!-- 
+		select * 
+		  from user
+		 where user_email = #{userEmail}
+		 -->		 
+		  select * 
+		   from user u
+		   inner join file f
+		     on u.file_group_code = f.file_group_code
+		   where user_email = #{userEmail}
+		     ;
+	</select>
+	
+	
+	
+	<!-- 이메일 찾기 -->	
+	<select id="findEmail" parameterType="string" resultType="string">
+		select user_email
+		from user
+		where user_phnum = #{userPhnum}
+		and user_type = '1'
+	</select>
+	<!-- 비밀번호 찾기 -->
+	<select id="findPass" parameterType="string" resultType="string">
+		select user_pass
+		from user
+		where user_email = #{email}
+		and user_type = '1'
+	</select>
+	
+	
+	<!-- 마이페이지 입찰 리스트 -입찰 가격 비교-->
+		<select id="isYours" parameterType="IsYours" resultType="IsYours">
+			select distinct max(bid_price) over() as bid_price, (select distinct max(bid_price) over() as maxPrice
+			from bid b
+			where auction_no = #{auctionNo}) as maxPrice
+			from bid b
+			where auction_no = #{auctionNo}
+			and user_email = #{userEmail}
+		</select>
+	<!-- 마이페이지 입찰 리스트 -->
+	<select id="bidList" parameterType="string" resultType="Auction">
+	select *
+	 from (select 
+		distinct   b.auction_no,
+		   a.auction_title,
+		   a.auction_buy_now,
+	       a.auction_limit_date,
+	       a.auction_condition,
+	       b.user_email,
+	       count(b.auction_no) over() as bitCnt,
+	       RANK() OVER (ORDER BY a.auction_no ) as auction_cnt
+	  from auction a
+	 inner join (select distinct max(bid_price) over(partition by auction_no) as bid_price, auction_no, user_email
+				    from bid
+				  where user_email = #{email}) b
+	    on a.auction_no = b.auction_no
+	 where a.auction_condition ='1')ab
+	 inner join ( select distinct  min(f.file_no) over(partition by a.auction_no) as file_no, a.auction_no
+	from auction a
+	inner join bid b
+	   on a.auction_no = b.auction_no
+	inner join file f
+	  on a.file_group_code = f.file_group_code
+	where b.user_email = #{email}
+	  and a.auction_condition = '1') abf
+	  on ab.auction_no = abf.auction_no;
+<!-- 	select 
+	distinct   b.auction_no,
+	   a.auction_title,
+	   a.auction_buy_now,
+       a.auction_limit_date,
+       b.user_email,
+	   b.bid_price,
+       count(b.auction_no) over() as bitCnt,
+       f.*,
+       RANK() OVER (ORDER BY a.auction_no ) as auction_cnt
+  from auction a
+ inner join (select distinct max(bid_price) over(partition by auction_no) as bid_price, auction_no, user_email
+			    from bid
+			  where user_email = #{email}) b
+    on a.auction_no = b.auction_no
+ inner join(select f.*
+			 from file f
+		     inner join  (select distinct  min(f.file_no) over(partition by a.auction_no) as file_no
+						    from auction a
+						   inner join bid b
+							  on a.auction_no = b.auction_no
+						   inner join file f
+							  on  f.file_group_code =a.file_group_code
+						   where b.user_email = #{email}) c
+							  on f.file_no = c.file_no ) f
+					on a.file_group_code = f.file_group_code
+ where b.user_email =#{email}; -->
+ 
+ <!-- 
+ select 
+	distinct   b.auction_no,
+	   a.auction_title,
+	   a.auction_buy_now,
+       a.auction_limit_date,
+       a.auction_condition,
+       b.user_email,
+	   b.bid_price,
+       count(b.auction_no) over() as bitCnt,
+       RANK() OVER (ORDER BY a.auction_no ) as auction_cnt
+  from auction a
+ inner join (select distinct max(bid_price) over(partition by auction_no) as bid_price, auction_no, user_email
+			    from bid
+			  where user_email = 'doublegoo@naver.com') b
+    on a.auction_no = b.auction_no
+ where a.auction_condition ='1';
+  -->
+ <!-- 
+ select distinct  min(f.file_no) over(partition by a.auction_no) as file_no, a.auction_no
+from auction a
+inner join bid b
+   on a.auction_no = b.auction_no
+inner join file f
+  on a.file_group_code = f.file_group_code
+where b.user_email = 'doublegoo@naver.com'
+  and a.auction_condition = '1';
+  -->
+ 
+ 
+	</select>
+	
+	<!-- 회원 탈퇴 -->
+	<delete id="deleteUser" parameterType="string">
+	   	delete from user
+		where user_email = #{userEmail}
+	</delete>
+	<!-- 회원 탈퇴 - 진행중인 판매 경매 체크 -->
+	<select id="checkAuction" parameterType="string"  resultType="Auction">
+		    select *
+       from auction a
+       where user_email = #{userEmail}
+         and auction_condition = 1;
+		
+	</select>
+	<!-- 회원 탈퇴 - 진행중인 판매/구매 거래 체크 -->
+	<select id="checkDeal" parameterType="string"  resultType="Auction">
+		 select * 
+		   from deal
+		  where user_email_seller = #{userEmail} 
+			and deal_condition = 1
+			 or 
+			user_email_seller = #{userEmail} 
+			and deal_condition = 1;
+		 
+	</select>
+	
+	
+	
+	<!-- 회원 가입 -->
+	<insert id="insertUser" parameterType="User">
+	  insert into user(user_email, user_pass, user_phnum, user_nickname, user_type
+ 	  ) values (#{userEmail}, #{userPass},#{userPhnum},#{userNickname}, #{userType});
+	</insert>
+	
+	
+	<!-- 회원 정보 수정 -->
+	<update id="updateUser"  parameterType="User">
+		<!-- 
+		update user 
+		   set user_pass = #{userPass},
+		   	   user_nickname = #{userNickname},
+			   user_phnum = #{userPhnum},
+			   file_group_code = #{fileGroupCode}
+		 where user_email = #{userEmail}
+		-->
+		update user 
+		   set file_group_code = #{fileGroupCode}
+			<if test="userNickname.length() != 0">
+				,user_nickname = #{userNickname}
+			</if>
+			<if test="userPhnum.length() != 0">
+				,user_phnum = #{userPhnum}
+			</if>
+			<if test="userPass.length() != 0">
+				,user_pass = #{userPass}
+			</if>
+	 	where user_email = #{userEmail}
+	</update>
+	<update id="updateUserDefaultProfile" parameterType="string" >
+		update user
+		   set file_group_code = 0
+		 where user_email = #{userEmail}
+	</update>
+	
+	
+	<!-- 회원가입 유효성검사 -->
+	<select id="checkEmail" parameterType="string" resultType="int">
+		select count(user_email)
+		  from user
+		 where user_email = #{userEmail}
+	</select>
+	<select id="checkPhnum" parameterType="string" resultType="int">
+		select count(user_phnum)
+		  from user
+		 where user_phnum = #{userPhnum}
+	</select>
+	<select id="checkNickname" parameterType="string" resultType="int">
+		select count(user_nickname)
+		  from user
+		 where user_nickname = #{userNickname}
+	</select>
+	
+</mapper> 

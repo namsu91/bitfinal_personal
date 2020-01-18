@@ -1,0 +1,299 @@
+html, body, .content {
+	background: black;
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+	display: flex;
+	justify-content: flex-end;
+	padding-top:0px;
+}
+
+.video {
+	position: absolute;
+	height: 100%;
+    width: 80%;
+	background-size: 100% 100%;
+	left: 0%;
+	top:0%;
+	border:none;
+	background: #000;
+}
+
+.innerLive {
+	height: 100%;
+	width: 20%;
+	z-index: 1;
+}
+
+.chatSpace {
+	height: 62%;
+	width: 100%;
+	background: #333;
+	box-sizing: border-box;
+	padding: 10px;
+	overflow: auto;
+}
+
+.chatInput {
+	height: 8%;
+	width: 100%;
+	background: #333;
+	box-sizing: border-box;
+	padding: 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.chatInput button {
+	width: 18%;
+	height: 90%;
+	border: none;
+	background: #E30921;
+	color: white;
+	font-weight: bold;
+	border-radius: 5px;
+}
+
+.chatInput textarea {
+	width: 80%;
+	height: 40px;
+	resize: none;
+	background: gray;
+	border: none;
+	border-radius: 5px;
+	color: white;
+	padding: 5px 5px 5px 5px;
+	font-size: 14px;
+	overflow: auto;
+	box-sizing: border-box;
+}
+
+.auctionInfo {
+	height: 30%;
+	width: 100%;
+	background: #fff;
+	box-sizing: border-box;
+	padding: 10px;
+	overflow: auto;
+}
+
+.bidSpace {
+	top: 30px;
+	left: 30px;
+	position: absolute;
+	width: max-content;
+	height: max-content;
+}
+
+.bid {
+	padding: 10px;
+	width: max-content;
+	height: max-content;
+	font-size: 20px;
+	z-index: 1;
+	background: rgba(0, 0, 0, 0.377);
+	margin: 10px;
+	padding: 15px;
+	color: rgb(255, 255, 255);
+	border-radius: 5px;
+}
+
+.chat {
+	margin: 10px;
+	color: white;
+	height: max-content;
+	width: 95%;
+	font-size: 18px;
+	word-break: break-all;
+}
+
+.auctionInfo {
+	font-size: 16px;
+	text-align: center;
+	display: flex;
+	flex-wrap: wrap;
+	align-content: space-around;
+}
+
+.auctionInfo>div {
+	width: 100%;
+}
+
+.auctionInfo>div>div {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.auctionInfo>div>div>span:nth-child(2) {
+	color: #E30921;
+	font-weight: 600;
+	font-size: 20px;
+}
+
+.auctionInfo button {
+	background: #E30921;
+	color: white;
+	width: 220px;
+	height: 30px;
+	border: none;
+	border-radius: 5px;
+	margin-top: 10px;
+	cursor: pointer;
+}
+
+.limitTime {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.realTModal {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	display: none;
+}
+
+.realTModalBack {
+	width: 100%;
+	height: 100%;
+	z-index: 2;
+	position: fixed;
+	background: rgba(0, 0, 0, 0.450);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.realTModalBack>div {
+	width: 500px;
+	height: 240px;
+	background: white;
+	box-sizing: border-box;
+	border-radius: 10px;
+}
+
+.mTitle {
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+	padding: 5px;
+	height: 40px;
+}
+
+.mTitle>span:nth-child(1) {
+	line-height: 40px;
+}
+
+.mContent>div {
+	width: 100%;
+	box-sizing: border-box;
+	height: 50px;
+	padding: 10px;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: space-evenly;
+}
+
+.mContent>div>span {
+	display: inline-block;
+	width: 30%;
+	font-weight: bold;
+	font-size: 17px;
+}
+
+.mContent input {
+	width: 71%;
+	text-align: end;
+	padding-right: 18px;
+	margin-right: 20px;
+}
+
+.mMaxBid>span:nth-child(2) {
+	color: #E30921;;
+}
+
+.won {
+	display: inline;
+	position: relative;
+	font-size: 13px;
+	color: gray;
+	left: 107px;
+	top: -25px;
+	line-height: 23px;
+	z-index: 1;
+}
+
+.mBtns {
+	width: 60%;
+	margin: auto;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.mBtns>button {
+	background: #E30921;
+	color: white;
+	width: 60px;
+	height: 30px;
+	border: none;
+	border-radius: 5px;
+	margin-top: 5px;
+	cursor: pointer;
+}
+
+.timer-font{
+	display:inline-block !important;
+}
+
+::-webkit-scrollbar {
+  width: 7px;  /* 세로축 스크롤바 길이 */
+}
+::-webkit-scrollbar-track {
+  background-color: white;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: #222;
+}
+::-webkit-scrollbar-thumb {
+  border-radius:5px;
+  background-color: #aaa;
+
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+
+.btns{
+	display:none;
+	position: absolute;
+	width: 3%;
+	height: 3%;
+	top:93%;
+	left:7%;
+}
+.btns > div {
+	width: 30%;
+	height: 100%;
+	display:flex;
+	font-size:18px;
+	color: white;
+	position:relative;
+	top: -5px;
+}
+
+.btns > div > span{
+	color: red;
+	margin-left: 5px;
+	position:relative;
+	top: -3px;
+}
+
+.btns a {
+	color: white;
+	margin-left: 20px;
+}

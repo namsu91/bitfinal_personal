@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.doublecome.repository.mapper.AuctionMapper">
+	<!--  카테고리 리스트 가져오기 -->
+	<select id="categoryList" resultType="Category">
+		select *
+		  from category
+	</select>
+	<select id="listAuction" resultType="Auction" parameterType="SearchAuction">
+		select distinct
+			a.auction_no,
+			a.auction_title,
+			a.auction_reg_date,
+			a.auction_limit_date,
+			a.auction_min_price,
+			a.auction_buy_now,
+			a.auction_min_price,
+			a.file_group_code,
+			a.user_email,
+            ifnull(b.bid_cnt,0)as bidCnt,
+            ifnull(b.max_price, a.auction_min_price) as maxPrice,
+            count(*) over() as auctionCnt,
+            max(f.file_no) over (partition by f.file_group_code) as file_no
+	 	 from auction a 
+	  	 left join(select auction_no,
+	  					  max(bid_price) over(partition by auction_no) as max_price,
+					  	  count(bid_no) over(partition by auction_no) as bid_cnt
+					 from bid) b
+		   on a.auction_no = b.auction_no
+		inner join file f
+		   on a.file_group_code = f.file_group_code
+		where auction_condition = 1
+	  	<if test="categoryCode != null and categoryCode != 0">
+	  		and category_code = #{categoryCode}
+	  	</if>
+	  	<if test="startPrice != null">
+			and ifnull(max_price, a.auction_min_price) between #{startPrice} and #{endPrice} 			
+	  	</if>
+	  	<if test="startLimit != null">
+	  		and a.auction_limit_date <![CDATA[<=]]> DATE_SUB(NOW(), INTERVAL #{startLimit} DAY)
+	  	</if>
+	  	<if test="startBidCount != null">
+	  		and ifnull(b.bid_cnt,0) between #{startBidCount} and #{endBidCount}
+	  	</if>
+	  	<if test="searchKeyWord != null">
+	  		and a.auction_title Like CONCAT('%',#{searchKeyWord},'%')
+	  	</if>
+	  	<choose>
+		  	<when test="sorts == null">
+				order by a.auction_reg_date desc
+		  	</when> 
+			<otherwise>
+		  		<if test='sorts.equals("minPrice")'>
+		  			order by maxPrice 
+		  		</if>
+		  		<if test='sorts.equals("maxPrice")'>
+		  			order by maxPrice desc
+		  		</if>
+		  		<if test='sorts.equals("regDate")'>
+		  			order by a.auction_reg_date
+		  		</if>
+		  		<if test='sorts.equals("binCnt")'>
+		  			order by bidCnt desc
+		  		</if>
+			</otherwise>	  			
+	  	</choose>
+	  	limit #{begin},#{listSize}
+	</select>
+</mapper>

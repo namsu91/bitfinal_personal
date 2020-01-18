@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="kr.co.doublecome.repository.mapper.AdminMapper">
+<!-- 유저 검색 쿼리 -->
+	<select id="selectUserForAdmin" parameterType="SearchUser"
+		resultType="User">
+		select full.*,
+			   count(*) over() as user_cnt	
+		  from (select distinct
+					   u.*,
+					   <if test="type != null">
+						   ifnull(user_reported_cnt,0) as user_reported_cnt,
+					   </if>
+					   ifnull(cnt1,0) + ifnull(cnt2,0) as user_deal_cnt
+				  from user u
+				  left outer join (select deal.user_email_buyer,
+										  count(*) over(partition by deal.user_email_buyer) as cnt1
+									 from deal) d1
+					on u.user_email = d1.user_email_buyer
+				  left outer join (select deal.user_email_seller,
+										  count(*) over(partition by deal.user_email_seller) as cnt2
+									 from deal) d2
+					on u.user_email = d2.user_email_seller	
+					
+					<if test="type != null">
+		 		  left outer join (select report_receiver,             
+								    count(*) over(partition by report_receiver) as user_reported_cnt           
+                                	 from report) r      
+		    	  	on u.user_email = r.report_receiver	
+		 			</if>
+					
+					
+					) full
+					
+		 <where>
+		 		<if test="type != null">
+		 			and user_reported_cnt > 0
+		 			<choose>
+						<when test="startReportedCnt!= null and endReportedCnt != null">
+							and user_reported_cnt between #{startReportedCnt} and #{endReportedCnt}
+						</when>
+						<when test="startReportedCnt == null and endReportedCnt != null">
+							and user_reported_cnt <![CDATA[<]]>= #{endReportedCnt}
+						</when>
+						<when test="startReportedCnt != null and endReportedCnt == null">
+							and user_reported_cnt <![CDATA[>]]>= #{startReportedCnt} 
+						</when>
+					</choose>
+		 		</if>
+		 		
+					<choose>
+						<when test="startScore != null and endScore != null">
+							and user_score between #{startScore} and #{endScore}
+						</when>
+						<when test="startScore == null and endScore != null">
+							and user_score <![CDATA[<]]>= #{endScore}
+						</when>
+						<when test="startScore != null and endScore == null">
+							and user_score <![CDATA[>]]>= #{startScore} 
+						</when>
+					</choose>
+					
+					<choose>
+						<when test="startDealCnt != null and endDealCnt != null">
+							and user_deal_cnt between #{startDealCnt} and #{endDealCnt}
+						</when>
+						<when test="startDealCnt == null and endDealCnt != null">
+							and user_deal_cnt <![CDATA[<]]> #{endDealCnt} + 1
+						</when>
+						<when test="startDealCnt != null and endDealCnt == null">
+							and user_deal_cnt <![CDATA[>]]> #{startDealCnt} - 1  
+						</when>
+					</choose>
+					
+					<choose>
+						<when test="startReviewCnt != null and endReviewCnt != null">
+							and user_review_cnt between #{startReviewCnt} and #{endDealCnt}
+						</when>
+						<when test="startReviewCnt == null and endReviewCnt != null">
+							and user_review_cnt <![CDATA[<]]> #{endReviewCnt} + 1
+						</when>
+						<when test="startReviewCnt != null and endReviewCnt == null">
+							and user_review_cnt <![CDATA[>]]> #{startReviewCnt} - 1 
+						</when>
+					</choose>
+					
+				<choose>
+					<when test="searchType == 'userEmail'">
+						and	user_email like CONCAT('%',#{keyword},'%')
+					</when>
+					<when test="searchType == 'userNickname'">
+						and	user_nickname like CONCAT('%',#{keyword},'%')
+					</when>
+					<when test="searchType == 'userPhnum'">
+						and	user_phnum like CONCAT('%',#{keyword},'%')
+					</when>						
+				</choose>
+		</where>			
+		
+		<choose>
+			<when test='sort == "userEamil"'>
+				order by user_email		
+			</when>
+			<when test='sort == "userNickname"'>
+				order by user_nickname		
+			</when>
+			<when test='sort == "userDealCnt"'>
+				order by user_deal_cnt desc		
+			</when>
+			<when test='sort == "userReviewCnt"'>
+				order by user_review_cnt desc		
+			</when>
+			<when test='sort == "userReportedCnt"'>
+				order by user_reported_cnt desc		
+			</when>
+		</choose>
+		
+		limit #{begin},#{listSize}
+	</select>
+	
+<!-- 신고 조회 -->
+	<select id="selectReportForAdmin" parameterType="Search" resultType="Report">
+		select *, 
+		 	   count(*) over() as report_cnt,
+         	   rt.report_type_name
+		  from report r
+  		 inner join report_type rt
+	  	    on r.report_type_code = rt.report_type_code  
+		 <where>
+		 	<choose>
+		 		<when test="searchType == 'userEmail'">
+		 			report_receiver = #{keyword}
+		 		</when>
+		 		<when test="searchType == 'auctionNo'">
+		 			auction_no = #{keyword}
+		 		</when>
+		 	</choose>
+		 </where>
+		 limit #{begin},5
+	</select>
+	
+<!-- 유저 삭제 -->	
+	<delete id="deleteUser" parameterType="java.util.List" >
+		delete
+		  from user
+		 where user_email in 
+		 <foreach collection="list" item="userEmail" open="(" close=")" separator=",">
+		 	#{userEmail}
+		 </foreach>  
+	</delete>
+
+
+<!-- 경매 검색 쿼리 -->
+	<select id="selectAuctionForAdmin" parameterType="SearchAuction" resultType="Auction">
+		select a.*,
+	   		   count(*) over() as auction_cnt,
+       	  	   ifnull(bid_price,0) as bid_price,
+       	  	   <if test="type != null">
+       	  	   		ifnull(auction_reported_cnt,0) as auction_reported_cnt,
+       	  	   </if>
+       	  	   c.category_name
+       	  	   
+       	  	   
+  	      from auction a
+  		  left outer join (select distinct max(bid_price) over(partition by auction_no) as bid_price,
+						          auction_no 
+			   			     from bid ) d
+    	    on a.auction_no = d.auction_no
+    	 inner join category c
+            on a.category_code = c.category_code
+            
+      <if test="type != null">
+		  left outer join (select auction_no,             
+								 count(*) as auction_reported_cnt           
+                            from report
+                            group by auction_no) r      
+		    on a.auction_no= r.auction_no	
+	  </if>      
+  		 
+  		 <where>
+  		 	<if test="type != null">
+			 	and auction_reported_cnt > 0
+			 	<choose>
+					<when test="startReportedCnt!= null and endReportedCnt != null">
+						and auction_reported_cnt between #{startReportedCnt} and #{endReportedCnt}
+					</when>
+					<when test="startReportedCnt == null and endReportedCnt != null">
+						and auction_reported_cnt <![CDATA[<]]>= #{endReportedCnt}
+					</when>
+					<when test="startReportedCnt != null and endReportedCnt == null">
+						and auction_reported_cnt <![CDATA[>]]>= #{startReportedCnt} 
+					</when>
+				</choose>
+		 	</if>
+  		 
+  		 	<choose>
+				<when test="startPrice != null and endPrice != null">
+					and bid_price between #{startPrice} and #{endPrice}
+				</when>
+				<when test="startPrice == null and endPrice != null">
+					and bid_price <![CDATA[<]]>= #{endPrice}
+				</when>
+				<when test="startPrice != null and endPrice == null">
+					and bid_price <![CDATA[>]]>= #{startPrice} 
+				</when>
+			</choose>
+			
+			<choose>
+				<when test="startLimitDate != null and endLimitDate != null">
+					and auction_limit_date between #{startLimitDate} and #{endLimitDate}
+				</when>
+				<when test="startLimitDate == null and endLimitDate != null">
+					and auction_limit_date <![CDATA[<]]>= #{endLimitDate}
+				</when>
+				<when test="startLimitDate != null and endLimitDate == null">
+					and auction_limit_date <![CDATA[>]]>= #{startLimitDate} 
+				</when>
+			</choose>
+
+  		  		and a.category_code in 
+  		  		<foreach collection="categories" item="staff" open="(" close=")" separator=",">
+		 			#{staff}
+				 </foreach> 
+  		 
+  		 	<choose>
+					<when test="searchType == 'auctionNo'">
+						and	a.auction_no like CONCAT('%',#{keyword},'%')
+					</when>
+					<when test="searchType == 'auctionTitle'">
+						and	a.auction_title like CONCAT('%',#{keyword},'%')
+					</when>
+					<when test="searchType == 'userEmail'">
+						and	a.user_email like CONCAT('%',#{keyword},'%')
+					</when>						
+			</choose>
+  		 </where>
+  		 
+  		 <choose>
+			<when test='sort == "auctionNo"'>
+				order by a.auction_no		
+			</when>
+			<when test='sort == "userEmail"'>
+				order by user_email		
+			</when>
+			<when test='sort == "bidPrice"'>
+				order by bid_price desc		
+			</when>
+			<when test='sort == "auctionLimitDate"'>
+				order by a.auction_limit_date		
+			</when>
+			<when test='sort == "auctionReportedCnt"'>
+				order by r.auction_reported_cnt desc		
+			</when>
+		</choose>
+  		 
+  		 limit #{begin},#{listSize}
+	</select>
+	
+	<!-- 카테고리 조회  -->
+	<select id="selectCategoriesForAdmin" parameterType="Search" resultType="Category">
+		select c.*, 
+			   ifnull(a.category_Auction_cnt,0) as category_Auction_cnt,
+			   count(c.category_code) over() as category_cnt
+		  from category c
+		  left outer join (select count(*) over (partition by category_code) as category_Auction_cnt,
+								  category_code
+						     from auction) a
+		    on  c.category_code = a.category_code
+         group by c.category_code    
+         having c.category_order > 0
+         	 <choose>
+			<when test='sort == "categoryCode"'>
+				order by c.category_code		
+			</when>
+			<when test='sort == "categoryName"'>
+				order by c.category_name	
+			</when>
+			<when test='sort == "categoryAuctionCnt"'>
+				order by category_Auction_cnt	desc
+			</when>
+		</choose>
+		 limit #{begin},#{listSize}
+	</select>
+	
+		<!-- 신고항목 조회  -->
+	<select id="selectReportTypesForAdmin" parameterType="Search" resultType="ReportType">
+		select rt.*, 
+	   		   ifnull(r.report_type_report_cnt,0) as report_type_report_cnt,
+	   	       count(rt.report_type_code) over() as report_cnt,
+	   	       report_type_order
+  	      from report_type rt
+  		  left outer join (select count(*) as report_type_report_cnt,
+						  				 	  report_type_code
+					 	     from report
+                    		group by report_type_code) r
+    		on  r.report_type_code = rt.report_type_code   
+    
+        <choose>
+			<when test='sort == "reportTypeCode"'>
+				order by c.category_code		
+			</when>
+			<when test='sort == "reportTypeName"'>
+				order by c.category_name	
+			</when>
+			<when test='sort == "reportTypeReportCnt"'>
+				order by category_deal_cnt	desc
+			</when>
+		</choose>
+		 limit #{begin},#{listSize}
+	</select>
+	
+	<!-- 카테고리 수정-->	
+	<update id="updateCategory" parameterType="Category">
+		update category
+		   set category_name = #{categoryName},
+		       category_order= #{categoryOrder},
+		   	   category_display = #{categoryDisplay}
+		where category_code = #{categoryCode}   	   
+	</update>
+	
+	<!-- 카테고리 등록-->	
+	<insert id="insertCategory" parameterType="Category">
+		insert into category(category_name, category_order, category_display
+		) values (#{categoryName}, #{categoryOrder}, #{categoryDisplay})
+	</insert>
+	
+	<!-- 신고항목 수정-->	
+	<update id="updateReportType" parameterType="ReportType">
+		update report_type
+		   set report_type_name = #{reportTypeName},
+		       report_type_order = #{reportTypeOrder}
+		where report_type_code = #{reportTypeCode}   	   
+	</update>
+	
+	<!-- 신고항목 등록-->	
+	<insert id="insertReportType" parameterType="ReportType">
+		insert into report_type(report_type_name, report_type_order
+		) values (#{reportTypeName}, #{reportTypeOrder})
+	</insert>
+	
+	<!-- 신고항목 삭제 -->	
+	<delete id="deleteReportType" parameterType="java.util.List" >
+		delete
+		  from report_type
+		 where report_type_code in 
+		 <foreach collection="list" item="code" open="(" close=")" separator=",">
+		 	#{code}
+		 </foreach>  
+	</delete>
+	
+	<!-- 카테고리 삭제 -->	
+	<delete id="deleteCategory" parameterType="java.util.List" >
+		delete
+		  from category
+		 where category_code in 
+		 <foreach collection="list" item="code" open="(" close=")" separator=",">
+		 	#{code}
+		 </foreach>  
+	</delete>
+	
+	<!-- 경매 삭제 -->
+	<delete id="deleteAuction" parameterType="java.util.List" >
+		delete
+		  from auction
+		 where auction_no in 
+		 <foreach collection="list" item="code" open="(" close=")" separator=",">
+		 	#{code}
+		 </foreach>  
+	</delete>	
+	
+	<!-- 경매조회  -->
+	<select id="selectDealForAdmin" parameterType="SearchDeal" resultType="Deal">
+		select d.*,
+       		   a.auction_title,
+       		   count(*) over() as deal_cnt
+  	      from deal d
+ 	  	 inner join auction a
+    		on d.auction_no = a.auction_no
+    		
+    		where d.deal_condition in 
+  		  		<foreach collection="categories" item="staff" open="(" close=")" separator=",">
+		 			#{staff}
+				 </foreach> 
+				 
+		     <choose>
+					<when test="searchType == 'auctionTitle'">
+						and	a.auction_title like CONCAT('%',#{keyword},'%')
+					</when>
+					<when test="searchType == 'userEmailBuyer'">
+						and	d.user_email_buyer like CONCAT('%',#{keyword},'%')
+					</when>						
+					<when test="searchType == 'userEmailSeller'">
+						and	d.user_email_Seller like CONCAT('%',#{keyword},'%')
+					</when>						
+			</choose>
+			
+			<choose>
+				<when test="startDealNo != null and endDealNo != null">
+					and d.deal_no between #{startDealNo} and #{endDealNo}
+				</when>
+				<when test="startDealNo == null and endDealNo != null">
+					and d.deal_no <![CDATA[<=]]>= #{endDealNo}
+				</when>
+				<when test="startDealNo != null and endDealNo == null">
+					and d.deal_no <![CDATA[>=]]> #{startDealNo} 
+				</when>
+			</choose>
+	</select>
+	
+	<!-- 유저 경매개수 통계 -->
+	<select id="selectUserStaticsByAuctionCnt" resultMap="pieFive">
+		select count(if(ifnull(cnt,0) between 0 and 5,1,null)) as 'first',
+		       count(if(cnt between 6 and 10,1,null)) as 'second',
+		       count(if(cnt between 11 and 15,1,null)) as 'third',
+		       count(if(cnt > 15,1,null)) as 'fourth'
+		  from user u
+    	  left outer join (select count(*) as cnt,
+					              user_email	
+				 	         from auction
+					        group by user_email) auc
+      	    on u.user_email = auc.user_email
+	</select>
+	
+	<!-- 유저 신고개수 통계 -->
+	<select id="selectUserStaticsByReport" resultMap="pieFive">
+		select count(if(ifnull(cnt,0) between 0 and 5,1,null)) as 'first',
+			   count(if(cnt between 6 and 10,1,null)) as 'second',
+		       count(if(cnt between 11 and 15,1,null)) as 'third',
+		       count(if(cnt > 15,1,null)) as 'fourth'
+		  from user u
+    	  left outer join (select count(*) as cnt,
+					              report_receiver	
+				             from report
+							group by report_receiver) rep
+      		on u.user_email = rep.report_receiver
+	</select>
+	
+	<!-- 유저 거래개수 통계 -->
+	<select id="selectUserStaticsByDealCnt" resultMap="pieFive">
+	  select count(if(ifnull(cnt,0) between 0 and 5,1,null)) as 'first',
+			 count(if(cnt between 6 and 10,1,null)) as 'second',
+		     count(if(cnt between 11 and 15,1,null)) as 'third',
+		     count(if(cnt > 15,1,null)) as 'fourth'
+	    from (select distinct u.user_email,cnt1 + cnt2 as cnt
+			    from user u
+			    left outer join (select deal.user_email_buyer,
+									    count(*) over(partition by deal.user_email_buyer) as cnt1
+							       from deal) d1
+			      on u.user_email = d1.user_email_buyer
+				left outer join (select deal.user_email_seller,
+									    count(*) over(partition by deal.user_email_seller) as cnt2
+						           from deal) d2
+			      on u.user_email = d2.user_email_seller) innerq
+	</select>
+	
+	<!-- 경매 카테고리별 통계 -->
+	<select id="selectAuctionStaticsByCategory" resultType="Category">
+		select c.category_name,
+			   a.category_auction_cnt as category_auction_cnt
+		  from category c
+		  inner join (select count(*) over (partition by category_code) as category_auction_cnt,
+								  category_code
+						     from auction) a
+		    on  c.category_code = a.category_code
+         group by c.category_code  
+         having c.category_code > 0
+	</select>
+	
+	<!-- 경매 상태별 통계 -->
+	<select id="selectAuctionStaticsByCondition" resultMap="pieTwo">
+		   select count(if(auction_condition = 1,1,null)) as first,
+          		  count(if(auction_condition = 2,1,null)) as second
+     	     from auction
+	</select>
+	
+	<!-- 경매 일자별 통계 -->
+	<select id="selectAuctionCntbyRegDate" resultMap="line" parameterType="map">
+		select count(*) as cnt, 
+			   date_format(auction_reg_date, '%Y-%m-%d') as date
+		  from auction
+		 where date_format(auction_reg_date, '%Y-%m-%d') between #{startDate} and #{endDate}
+		 group by date_format(auction_reg_date, '%Y-%m-%d')
+		 order by date_format(auction_reg_date, '%Y-%m-%d')
+	</select>
+	
+	<!-- 유저 일자별 통계 -->
+	<select id="selectUserCntbyRegDate" resultMap="line" parameterType="map">
+		select count(*) as cnt, 
+			   date_format(user_reg_date, '%Y-%m-%d') as date
+		  from user
+		 where date_format(user_reg_date, '%Y-%m-%d') between #{startDate} and #{endDate}
+		 group by date_format(user_reg_date, '%Y-%m-%d')
+		 order by date_format(user_reg_date, '%Y-%m-%d')
+	</select>
+	
+	
+	<resultMap id="pieFive" type="java.util.HashMap">
+		<result javaType="java.lang.String" column="first" property="0 - 5"/>
+		<result javaType="java.lang.String" column="second" property="6 - 10"/>
+		<result javaType="java.lang.String" column="third" property="11 - 15"/>
+		<result javaType="java.lang.String" column="fourth" property="16 -"/>
+	</resultMap>
+	
+	<resultMap id="pieTwo" type="java.util.HashMap">
+		<result javaType="java.lang.String" column="first" property="진행중인 경매"/>
+		<result javaType="java.lang.String" column="second" property="완료된 경매"/>
+	</resultMap>
+	
+	<resultMap id="line" type="java.util.HashMap">
+		<result javaType="java.lang.String" column="date" property="date"/>
+		<result javaType="java.lang.String" column="cnt" property="cnt"/>
+	</resultMap>
+	
+	<!-- 신고 등록시 거래정보  -->
+	<select id="dealInfo" parameterType="int" resultType="Deal">
+		select *
+		  from deal
+		 where auction_no = #{auctionNo}
+	</select>
+	
+	<!-- 신고 등록 -->
+	<insert id="insertReport" parameterType="Report">
+		insert into report (
+			report_content, report_sender, report_receiver, deal_no, report_type_code, auction_no
+		) values (
+			#{reportContent}, #{reportSender}, #{reportReceiver}, #{dealNo}, #{reportTypeCode}, #{auctionNo}
+		)
+	</insert>
+	
+	<!-- 신고시 dealCondition 변경 -->
+	<update id="updateDealCondition" parameterType="Deal" >
+		update deal
+		   set deal_condition = 4,
+		<choose>
+			<when test='userEmailBuyer == userEmail'>
+				deal_buyer_condition = 4
+			</when>
+			<otherwise>
+				deal_seller_condition = 4
+			</otherwise>
+		</choose>		
+		where deal_no = #{dealNo}
+	</update>
+</mapper>

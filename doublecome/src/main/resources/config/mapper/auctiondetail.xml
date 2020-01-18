@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="kr.co.doublecome.repository.mapper.AuctionDetailMapper">
+	<!-- 옥션 해당페이지 retrieve -->
+	<select id="auctiondetail" resultType="Auction"
+		parameterType="int">
+		select distinct a.*,
+		count(b.auction_no) over(partition
+		by b.auction_no) as bid_cnt,
+		max(b.bid_price) over(partition by
+		b.auction_no) as max_price
+		from auction a
+		left join bid b
+		on a.auction_no
+		= b.auction_no
+		where a.auction_no = #{auctionNo}
+	</select>
+
+	<select id="retrieveinquiry" resultType="Inquiry"
+		parameterType="Search">
+		select i.*, u.user_nickname ,
+		count(i.user_email) over() as inquiry_cnt
+		from inquiry i
+		inner join user u
+		on i.user_email = u.user_email
+		where auction_no = #{keyword}
+		order by IF(ISNULL(inquiry_parent), inquiry_no, inquiry_parent) desc
+		limit #{begin},#{listSize}
+	</select>
+
+	<insert id="insertInquiry" parameterType="Inquiry">
+		insert into inquiry (inquiry_content, inquiry_parent, auction_no,
+		user_email)
+		values (#{inquiryContent},
+		<if test="inquiryParent != 0">
+			#{inquiryParent}
+		</if>
+		<if test="inquiryParent == 0">
+			null
+		</if>
+		, #{auctionNo}, #{userEmail})
+	</insert>
+
+	<insert id="addAuction" parameterType="Auction">
+		insert into auction
+		(auction_title, auction_content, auction_limit_date, auction_buy_now,
+		auction_min_price, user_email, file_group_code, category_code)
+		values
+		(#{auctionTitle}, #{auctionContent}, #{auctionLimitDate},
+		#{auctionBuyNow}, #{auctionMinPrice}, #{userEmail}, #{fileGroupCode},
+		#{categoryCode})
+	</insert>
+
+	<select id="maxFileGroupCode" resultType="int">
+		select
+		max(file_group_code)
+		from file
+	</select>
+
+	<insert id="addFile" parameterType="UtilFile">
+		<selectKey order="AFTER" keyProperty="fileNo"
+			keyColumn="file_no" resultType="int">
+			select max(file_no)
+			from file
+		</selectKey>
+		insert into file (file_group_code, file_origin_name, file_system_name,
+		file_path)
+		values (#{fileGroupCode}, #{fileOriginName},
+		#{fileSystemName}, #{filePath})
+	</insert>
+
+	<insert id="addTag" parameterType="UtilFile">
+		insert into file_tag (file_no,
+		tag_x_cor, tag_y_cor, tag_content)
+		values (#{fileNo}, #{tagXCor},
+		#{tagYCor}, #{tagContent})
+	</insert>
+
+	<select id="retrieveFile" parameterType="int"
+		resultType="UtilFile">
+		select *
+		from file f
+		inner join auction a
+		on f.file_group_code
+		= a.file_group_code
+		where a.auction_no = #{auctionNo}
+	</select>
+
+	<select id="retrieveFileTag" parameterType="int"
+		resultType="UtilFile">
+		select t.*, f.*
+		from file_tag t
+		join file f
+		on t.file_no =
+		f.file_no
+		join auction a
+		on a.file_group_code = f.file_group_code
+		where
+		a.auction_no = #{auctionNo}
+	</select>
+
+
+	<delete id="deleteAuction" parameterType="int">
+		delete
+		from auction
+		where auction_no = #{auctionNo}
+	</delete>
+
+	<update id="updateInquiry" parameterType="Inquiry">
+		update inquiry
+		set
+		inquiry_content = #{inquiryContent}
+		where inquiry_no = #{inquiryNo}
+	</update>
+
+	<delete id="deleteInquiry" parameterType="int">
+		delete
+		from inquiry
+		where inquiry_no = #{inquiryNo}
+		or inquiry_parent = #{inquiryNo}
+	</delete>
+
+	<insert id="auctionBid" parameterType="Auction">
+		insert into bid(bid_price,
+		user_email, auction_no)
+		values(#{bidPrice}, #{userEmail}, #{auctionNo})
+	</insert>
+
+	<insert id="insertDeal" parameterType="Deal">
+		insert into
+		deal(auction_no, user_email_buyer, user_email_seller)
+		values
+		(#{auctionNo}, #{userEmailBuyer}, #{userEmailSeller});
+	</insert>
+
+	<select id="checkBid" parameterType="Auction" resultType="int">
+		select count(*)
+		from (select *
+		from bid
+		where auction_no = #{auctionNo}
+		and bid_price <![CDATA[>=]]>
+		#{bidPrice}) as b;
+	</select>
+
+	<select id="callSPAddDeal" parameterType="Auction"
+		statementType="CALLABLE">
+		call addDeal(#{bidPrice}, #{auctionNo},
+		#{userEmailBuyer})
+	</select>
+	<!-- 10초에 한번씩 낙찰받은 글중 문자전송을 하지않은 유저번호 셀렉트 -->
+	<select id="smsList" resultType="Auction">
+		select distinct u.user_phnum,
+		a.auction_title, max(b.bid_price) as bid_price, u.user_nickname
+		from
+		auction a
+		join user u
+		on a.user_email = u.user_email
+		join bid b
+		on b.auction_no = a.auction_no
+		where auction_sms = 1
+		and auction_condition
+		= 2
+		group by b.auction_no;
+	</select>
+
+	<update id="smsUpdate">
+		update auction
+		set auction_sms = 2
+		where auction_sms =
+		1
+		and auction_condition = 2;
+	</update>
+
+	<select id="bidList" parameterType="int" resultType="Auction">
+		select
+		u.user_nickname, b.bid_price
+		from bid b
+		join user u
+		on b.user_email = u.user_email
+		where auction_no = #{auctionNo}
+		order by bid_price desc
+		limit 5
+	</select>
+
+	<select id="selectPhNum" parameterType="int" resultType="String">
+		select
+		u.user_phnum
+		from bid b
+		join user u
+		on b.user_email = u.user_email
+		where
+		b.auction_no = #{AuctionNo}
+		order by bid_price desc
+		limit 1
+	</select>
+
+	<select id="selectAuctionForLive" parameterType="int"
+		resultType="Auction">
+		select distinct a.*,
+		ifnull(b.bid_price,a.auction_min_price) as max_price,
+		ifnull(b.user_email,'입찰자가 없습니다.') as max_price_id
+		from auction a
+		left outer join ( select outter_bid.*
+		from bid outter_bid
+		inner join (select max(bid_price) as max_price
+		from bid
+		where auction_no = #{auctionNo}) inner_bid
+		on outter_bid.bid_price = inner_bid.max_price
+		where auction_no = #{auctionNo}) b
+		on a.auction_no = b.auction_no
+		where a.auction_no = #{auctionNo}
+	</select>
+
+	<update id="updateOnAir" parameterType="map">
+		update auction
+		set auction_broadcast = #{onAir}
+		where auction_no = #{auctionNo}
+	</update>
+
+	<select id="selectMaxBid" parameterType="int" resultType="int">
+		select ifnull(b.bid_price,a.auction_min_price)
+		from auction a
+		left outer join bid b
+		on a.auction_no = b.auction_no
+		where a.auction_no = #{auctionNo};
+	</select>
+
+	<select id="checkReport" parameterType="Report" resultType="int">
+		select count(*)
+		from report
+		where report_sender = #{reportSender}
+		and auction_no = #{auctionNo}
+	</select>
+
+
+
+</mapper>

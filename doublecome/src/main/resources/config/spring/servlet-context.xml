@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+      					  http://www.springframework.org/schema/beans/spring-beans.xsd
+            			  http://www.springframework.org/schema/context 
+            			  http://www.springframework.org/schema/context/spring-context.xsd
+            			  http://www.springframework.org/schema/mvc 
+            			  http://www.springframework.org/schema/mvc/spring-mvc.xsd
+            			  http://www.springframework.org/schema/task
+						  http://www.springframework.org/schema/task/spring-task.xsd">
+
+		<bean id="interceptorLogin" class="kr.co.doublecome.common.controller.Interceptor"></bean>
+
+	<mvc:interceptors>
+	    <bean id="webContentInterceptor" class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+	        <property name="cacheSeconds" value="0" />
+	        <property name="useExpiresHeader" value="true" />
+	        <property name="useCacheControlHeader" value="true" />
+	        <property name="useCacheControlNoStore" value="true" />
+	    </bean> 
+		<mvc:interceptor>
+			<mvc:mapping path="/auction/insertAuction.do"/>
+			<mvc:mapping path="/user/userInfo.do"/>
+			<mvc:mapping path="/admin/**"/>
+			<ref bean="interceptorLogin"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	
+	<!-- 컨테이너에 객체를 어노테이션으로 자동 등록 -->
+	<context:component-scan base-package="kr.co.doublecome" />
+	
+	<!-- 각종 mvc관련 어노테이션 (ex: RequestMapping) 및 제이슨파일 처리설정 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html; charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 정적페이지 처리 -->
+	<mvc:default-servlet-handler />
+
+	<mvc:resources mapping="/resources/../**" location="/resources/../**" />
+	<!-- 페이지 이동 설정 -->
+	<mvc:view-resolvers>
+		<mvc:jsp prefix="/WEB-INF/jsp/" suffix=".jsp" />
+	</mvc:view-resolvers>
+	
+	<!-- 파일업로드 관련 클래스 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="1048576"></property>
+	</bean>
+	
+	<!-- 구글 gson 관련 클래스 -->
+	<bean id="gson" class="com.google.gson.Gson"/>
+	
+	
+	<!--구글 계정으로  메일 발송 -->
+	<bean id="mailSend" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		 <property name="host" value="smtp.gmail.com" />
+			  <property name="port" value="587" /> 
+				  <property name="username" value="doublecome4@gmail.com"/> 
+				  <property name="password" value="q@we$rt^y" /> 
+				  <property name="javaMailProperties">
+				  <props> 
+					  <prop key="mail.smtp.auth">true</prop> 
+					  <prop key="mail.smtp.starttls.enable">true</prop>
+				  </props>
+			  </property>
+	 </bean>
+	 <!-- 
+	 직접 보내는게 아니라
+	 smtp로 메일을 보내기 위해서  구글계정 인증이 필요
+	 https://darkhorizon.tistory.com/324 참조
+	 아니면 계정 보안수준 조정
+	 https://myaccount.google.com/lesssecureapps
+	  -->
+	  
+	<task:annotation-driven />
+
+	 
+</beans>

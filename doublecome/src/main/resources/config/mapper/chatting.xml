@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.doublecome.repository.mapper.ChattingMapper">
+	<select id="listChat" parameterType="ChatSearch" resultType="Chat">
+		select 		c.chat_no,
+		    c.deal_no,
+		    c.user_email_seller,
+		    c.user_email_buyer,
+		    c.reads_seller,
+		    c.reads_buyer,
+		    b.covst_content,
+		    b.covst_reg_date,
+            d.auction_title,
+            d.file_no,
+		    (select file_group_Code
+			   from user
+			  where user_email = c.user_email_seller
+		    ) as sellerFileGroupCode,
+		    (select file_group_Code
+			   from user
+			  where user_email = c.user_email_buyer
+		    ) as buyerFileGroupCode,
+		      (select user_nickname
+			   from user
+			  where user_email = c.user_email_seller
+		    ) as sellerNickName, 
+		    (select user_nickname
+			   from user
+			  where user_email = c.user_email_buyer
+		    ) as buyerNickName
+		  from chat c 
+		 left join (select covst_content, covst_reg_date, chat_no
+					   from conversation con
+					  inner join (select max(covst_no) as maxNo
+								   from conversation
+								   group by chat_no
+								 ) as inn
+						 on con.covst_no = inn.maxNo
+		              ) as b
+		    on c.chat_no = b.chat_no
+		  inner join (select distinct 
+		  			  deal_no, 
+		  			  del.auction_no, 
+		  			  auction_title,
+		  			  max(f.file_no) over (partition by f.file_group_code) as file_no
+						from deal del
+					   inner join auction auc
+						on del.auction_no = auc.auction_no
+					   inner join file f
+					      on f.file_group_Code = auc.file_group_code
+						) as d
+				on d.deal_no = c.deal_no
+		  where  (user_email_seller like #{email}
+		     or user_email_buyer like #{email})
+		  <if test="searchValue != null">
+		  	 and d.auction_title like CONCAT('%',#{searchValue},'%')
+		  </if>
+	</select>
+	<select id="oneChat" parameterType="ConverSation" resultType="ConverSation">
+		select 
+			covst_no,
+			covst_content,
+			user_email,
+			chat_no,
+			covst_reg_date,
+			covst_reads
+		  from conversation
+		 where chat_no = #{chatNo}
+		 order by covst_no
+	</select>
+	<update id="updateChat" parameterType="ConverSation" >
+		update chat
+		   <choose>
+		   <when test="userType == 1">
+		   		set reads_seller = 0
+		   </when>
+		   <otherwise>
+		   		set reads_buyer = 0
+		   </otherwise>
+		   </choose>
+		 where chat_no = #{chatNo}
+	</update>
+	<insert id="addCovstData" parameterType="ConverSation">
+		insert into conversation(covst_content, user_Email, chat_No)
+		 values(#{covstContent},#{userEmail},#{chatNo})
+	</insert>
+	<update id="updateReads" parameterType="Chat">
+		update chat
+		   <choose>
+		   <when test="userType == 1">
+		   		set reads_buyer = reads_buyer + 1
+		   </when>
+		   <otherwise>
+		   		set reads_seller = reads_seller + 1
+		   </otherwise>
+		   </choose>
+		 where chat_no = #{chatNo}
+	</update>
+	<update id="deleteReads" parameterType="ConverSation">
+		update chat
+	   		set reads_buyer = 0, reads_seller = 0
+		 where chat_no = #{chatNo}
+	</update>
+	<select id="readsCnt" parameterType="Chat" resultType="int">
+		select 
+		<choose>
+			<when test="userType == 1">
+				reads_buyer
+			</when>
+			<otherwise>
+				reads_seller
+			</otherwise>
+		</choose> 
+			from chat
+		   where chat_no = #{chatNo}
+	</select>
+	<select id="getMessage" parameterType="String" resultType="GetCount">
+		select (select sum(reads_seller)
+		  from chat
+		 where user_email_seller = #{email}
+		) as readsSeller,
+        (select sum(reads_buyer)
+		   from chat
+		  where user_email_buyer = #{email}
+		) as readsBuyer
+		  from chat limit 1
+	</select>
+	<update id="messageReads" parameterType="Conversation">
+		update conversation
+		   set covst_reads = 0
+		 where chat_no = #{chatNo}
+		   and user_Email != #{userEmail}
+	</update>
+</mapper>

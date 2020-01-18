@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.doublecome.repository.mapper.MainMapper">
+	<!--  옥션 전체 리스트 가져오기 -->
+	<select id="mainAuctionList" resultType="Auction">
+		select distinct
+			a.auction_no,
+			a.auction_title,
+			a.auction_reg_date,
+			a.auction_limit_date,
+			a.auction_min_price,
+			a.auction_buy_now,
+			a.auction_min_price,
+			a.file_group_code,
+			a.user_email,
+            ifnull(b.bid_cnt,0)as bidCnt,
+            ifnull(b.max_price, a.auction_min_price) as maxPrice,
+            count(*) over() as auctionCnt,
+            max(f.file_no) over (partition by f.file_group_code) as file_no
+	 	 from auction a 
+	  	 left join(select auction_no,
+	  					  max(bid_price) over(partition by auction_no) as max_price,
+					  	  count(bid_no) over(partition by auction_no) as bid_cnt
+					 from bid) b
+		   on a.auction_no = b.auction_no
+	    inner join file f
+		   on a.file_group_code = f.file_group_code
+		where auction_condition = 1
+		order by bid_cnt desc
+	</select>
+	<select id="categoryList" resultType="Category">
+		select *
+		  from category
+	</select>
+	
+	<select id="selectOnAirAuction" resultType="Auction">
+	select distinct
+			a.auction_no,
+			a.auction_title,
+			a.auction_reg_date,
+			a.auction_limit_date,
+			a.auction_min_price,
+			a.auction_buy_now,
+			a.auction_min_price,
+			a.file_group_code,
+			a.user_email,
+            ifnull(b.bid_cnt,0)as bidCnt,
+            ifnull(b.max_price, a.auction_min_price) as maxPrice,
+            count(*) over() as auctionCnt,
+            max(f.file_no) over (partition by f.file_group_code) as file_no
+	 	 from auction a 
+	  	 left join(select auction_no,
+	  					  max(bid_price) over(partition by auction_no) as max_price,
+					  	  count(bid_no) over(partition by auction_no) as bid_cnt
+					 from bid) b
+		   on a.auction_no = b.auction_no
+	    inner join file f
+		   on a.file_group_code = f.file_group_code
+		where auction_condition = 1
+		  and auction_broadcast = 2
+		order by bid_cnt desc
+	</select>
+	
+</mapper>
+<!--           and str_to_date(a.auction_limit_date, "%Y-%m-%d") > str_to_date(date_format(now(), "%Y-%m-%d"), "%Y-%m-%d") -->

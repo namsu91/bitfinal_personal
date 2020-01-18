@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security 
+						http://www.springframework.org/schema/security/spring-security.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd">
+<!-- 필요한 빈객체 먼저 등록 -->						
+	<bean id="loginSuccessHandler" class="kr.co.doublecome.util.security.LoginSuccessHandler" />
+	<!-- <bean id="loginFailureHandler" class="kr.co.doublecome.util.security.LoginFailureHandler" /> -->
+	<bean id="myBatisUserDetailsService" class="kr.co.doublecome.util.security.MyBatisUserDetailsService" />
+			
+<!-- 인코더방식 설정  -->
+	<bean id="bcryptPasswordEncoder" 
+		  class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+		  
+<!-- 시큐리티 설정 -->	  
+	<security:http> 
+		<security:csrf disabled="true" />
+		
+		<security:intercept-url pattern="/**" access="permitAll" />
+		
+		
+<!--  		<security:intercept-url pattern="/index.jsp" access="permitAll" /> -->
+<!--  		<security:intercept-url pattern="/user/loginForm.do" access="permitAll" /> -->
+<!--  		<security:intercept-url pattern="/user/joinForm.do" access="permitAll" /> -->
+<!--  		<security:intercept-url pattern="/user/insert.do" access="permitAll" /> -->
+<!--  		<security:intercept-url pattern="/main.do" access="permitAll" /> -->
+<!-- 		<security:intercept-url pattern="/resources/**" access="permitAll" /> -->
+<!--  		<security:intercept-url pattern="/**" access="hasRole('ROLE_U')" /> -->
+		<!-- <security:intercept-url pattern="admin.do" access="hasRole('ROLE_A')" /> -->
+		<security:form-login login-page="/user/loginForm.do" 
+							 username-parameter="userEmail" 
+							 password-parameter="userPass" 
+		                     authentication-success-handler-ref="loginSuccessHandler" 
+		                     login-processing-url="/user/login.do" />
+		<security:logout logout-url="/user/logout.do" 
+						 logout-success-url="/main.do"
+		                 invalidate-session="true" 
+		                 delete-cookies="JSESSIONID" />     
+		                    <!--  authentication-failure-handler-ref="loginFailureHandler" --> 
+		                 
+		                 
+	<!-- <security:session-management invalid-session-url="/main.do">
+        <security:concurrency-control max-sessions="1" expired-url="/main.do" error-if-maximum-exceeded="true"/>
+    </security:session-management> -->
+
+
+
+		                             
+	</security:http>	
+					
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref="myBatisUserDetailsService">
+			<security:password-encoder ref="bcryptPasswordEncoder" />
+		</security:authentication-provider>
+	</security:authentication-manager>
+	
+</beans>

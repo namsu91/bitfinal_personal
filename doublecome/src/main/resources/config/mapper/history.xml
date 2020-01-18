@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.doublecome.repository.mapper.HistoryMapper">	
+	<!-- 공통 페이징 footer -->
+	<sql id="commonPagingFooter">
+		limit #{begin}, #{listSize}
+	</sql>
+	
+	<!-- 받은 후기 개수 -->
+	<select id="receiveReviewCnt" resultType="int" parameterType="String">
+		select count(*)
+		  from review
+		 where review_receiver = #{userEmail}
+	</select>
+	
+	<!-- 받은 후기 목록 -->
+	<select id="selectReceiveReview" resultType="Review" parameterType="Search">
+		select r.*, 
+			   a.auction_title,
+			   a.auction_no,
+			   a.user_email, 
+			   u.user_nickname as sender_nickname,
+			   max(f.file_no) over () as file_group_code,
+			   count(*) over() as reviewCnt
+		  from review r
+		 inner join deal d
+		    on r.deal_no = d.deal_no
+		 inner join auction a
+		    on d.auction_no = a.auction_no
+		 inner join user u 
+		    on u.user_email = r.review_sender
+		  join file f
+		    on u.file_group_code = f.file_group_code
+		 where r.review_receiver = #{keyword}
+ 		<choose>
+ 			<when test='sort == "highGrade"'>
+				 order by r.review_score desc, r.review_reg_date desc
+ 			</when>
+ 			<when test='sort == "lowGrade"'>
+				 order by r.review_score asc, r.review_reg_date desc
+ 			</when>
+ 			<when test='sort == "recency"'>
+			 	 order by r.review_reg_date desc
+ 			</when>
+ 			<otherwise>
+			 	 order by r.review_reg_date desc
+ 			</otherwise>
+ 		</choose>
+		 limit #{begin}, 5
+	</select>
+	
+	<!-- 보낸 후기 개수 -->
+	<select id="sendReviewCnt" resultType="int" parameterType="String">
+		select count(*)
+		  from review
+		 where review_sender = #{userEmail}
+	</select>
+	
+	<!-- 보낸 후기 목록 -->
+	<select id="selectSendReview" resultType="Review" parameterType="Search">
+		select r.*, 
+			   a.auction_no, 
+			   a.auction_title,
+			   a.user_email, 
+			   u.user_nickname as sender_nickname,
+			   max(f.file_no) over () as file_group_code,
+			   count(*) over() as reviewCnt
+		  from review r
+		 inner join deal d
+		    on r.deal_no = d.deal_no
+		 inner join auction a
+		    on d.auction_no = a.auction_no
+		 inner join user u 
+		    on u.user_email = r.review_sender
+		  join file f
+		    on u.file_group_code = f.file_group_code
+		 where r.review_sender = #{keyword}
+	 		<choose>
+	 			<when test='sort == "highGrade"'>
+					 order by r.review_score desc, r.review_reg_date desc
+	 			</when>
+	 			<when test='sort == "lowGrade"'>
+					 order by r.review_score asc, r.review_reg_date desc
+	 			</when>
+	 			<when test='sort == "recency"'>
+				 	 order by r.review_reg_date desc
+	 			</when>
+	 			<otherwise>
+				 	 order by r.review_reg_date desc
+	 			</otherwise>
+	 		</choose>
+		 limit #{begin}, 5
+	</select>
+	
+	<!-- 구매횟수, 판매횟수, 후기갯수 -->
+	<select id="userInfo" resultType="History" parameterType="String">
+		select distinct u.*,
+			   ifnull(a.sell_cnt, 0) as sell_cnt,
+			   b.buy_cnt
+		  from user u
+		  join (select count(*) as sell_cnt, #{user_email} as user_email
+				  from auction
+                 where user_email = #{user_email}) a
+		    on u.user_email = a.user_email
+		  join (select count(*) - 1 as buy_cnt, c.user_email as user_email
+         		  from (select count(*), user_email
+           			      from bid
+                         where user_email = #{user_email}
+                         group by auction_no
+				union
+                select 0 as cnt, #{user_email}) c) b
+		    on u.user_email = b.user_email
+		 where u.user_email = #{user_email};
+	</select>
+	
+	<select id="salesInfo" resultType="History" parameterType="String">
+		select distinct u.*,
+			   count(d.user_email_seller) over(partition by d.user_email_seller) as sell_cnt
+		  from user u
+		  left join deal d
+		    on u.user_email = d.user_email_seller
+		   and d.deal_condition = 2
+		 where user_email = #{userEmail}
+	</select>
+	
+	<select id="purchaseInfo" resultType="int" parameterType="String">
+		select count(user_email_buyer) as buy_cnt
+		  from deal 
+		 where user_email_buyer = #{userEmail}
+		   and deal_condition = 2
+	</select>
+	
+	
+	
+	<!-- 받은리뷰 개수, 평점 -->
+	<update id="updateUserReviewInfo" parameterType="Review">
+		<selectKey resultType="int" keyProperty="reviewScore" order="BEFORE">
+			select distinct ifnull(sum(review_score), 0)
+			  from review
+			 where review_receiver = #{reviewReceiver}
+		</selectKey>
+		update user
+		   set
+		   <choose>
+		   	<when test='type == "insert"'>
+		   		user_review_cnt = user_review_cnt + 1,
+				user_score = #{reviewScore} / user_review_cnt
+		   where user_email = #{reviewReceiver}
+		   	</when>
+			<when test='type == "delete"'>
+				user_review_cnt = user_review_cnt - 1,
+				user_score =
+				case when #{reviewScore} = 0 then 0
+				     else #{reviewScore} / user_review_cnt
+				      end
+		   where user_email = #{reviewReceiver}
+			</when>
+			<when test='type == "update"'>
+				user_score = #{reviewScore} / user_review_cnt
+				where user_email = #{reviewReceiver}
+			</when>
+		   </choose>
+	</update>
+	
+	<!-- 판매내역 -->
+	<select id="saleHistory" resultType="Auction" parameterType="Search">
+	select z.*, count(*) over () as auction_cnt
+	  from (select distinct a.*, 
+			   	   d.deal_condition,
+				   d.deal_buyer_condition,
+				   d.deal_seller_condition,
+			   	   d.deal_no,
+			   	   d.deal_reg_date,
+		           max(b.bid_price) over (partition by b.auction_no) as max_price,
+		           r.review_sender,
+		           u.user_score,
+		           u.user_nickname,
+			       max(f.file_no) over (partition by f.file_group_code) as file_no
+			  from auction a
+			 inner join user u
+			    on a.user_email = u.user_email
+			  left join deal d
+			    on a.user_email = d.user_email_seller
+			   and a.auction_no = d.auction_no
+		      left join bid b
+		           on a.auction_no = b.auction_no
+		      left join review r
+		        on d.deal_no = r.deal_no
+		       and a.user_email = r.review_sender
+		      left join file f
+		        on f.file_group_code = a.file_group_code
+			 where a.user_email = #{keyword}
+		<choose>
+	   	 	<when test="searchType == 'auctionBid' or searchType == ''">
+	   	 		and a.auction_condition = 1) as z
+	   	 	</when>
+	   	 	<when test="searchType == 'dealProgress'">
+	   	 		and d.deal_condition = 1) as z
+	   	 	</when>
+	   	 	<when test="searchType == 'dealComplete'">
+	   	 		and d.deal_condition = 2) as z
+	   	 	</when>
+	   	 	<when test="searchType == 'auctionFail'">
+	   	 		and a.auction_condition = 3) as z
+	   	 	</when>
+	   	 	<otherwise>
+	   	 	    and d.deal_condition in (3, 4)) as z
+	   	 	</otherwise>
+	   	 </choose>
+	   	 	order by z.auction_no desc
+		limit #{begin}, #{listSize}
+	</select>
+	
+	<!-- 구매내역 -->
+	<select id="buyHistory" resultType="Auction" parameterType="Search">
+		select z.*, count(*) over () as auction_cnt
+		  from (select distinct a.*, 
+					   d.deal_no,
+					   d.deal_condition,
+					   d.deal_buyer_condition,
+					   d.deal_seller_condition,
+					   d.deal_reg_date,
+					   max(b.bid_price) over(partition by b.auction_no) as bid_price,
+					   u.user_score,
+					   u.user_nickname,
+					   r.review_sender,
+					   max(f.file_no) over (partition by f.file_group_code) as file_no
+				  from auction a
+				 inner join user u
+				    on a.user_email = u.user_email
+				  left join deal d
+				    on a.auction_no = d.auction_no
+			      left join bid b
+		            on a.auction_no = b.auction_no
+		          left join review r
+		            on d.deal_no = r.deal_no
+		           and d.user_email_buyer = r.review_sender
+		          left join file f
+		            on f.file_group_code = a.file_group_code
+			   	 where 
+	   	 <choose>
+	   	 	<when test="searchType == 'auctionBid' or searchType == ''" >
+			   	b.user_email = #{keyword}
+	   	 		and a.auction_condition = 1) as z
+	   	 	</when>
+	   	 	<when test="searchType == 'dealProgress'" >
+	   	 		d.user_email_buyer = #{keyword}
+	   	 		and d.deal_condition = 1) as z
+	   	 	</when>
+	   	 	<when test="searchType == 'dealComplete'" >
+			   	b.user_email = #{keyword}
+	   	 		and d.deal_condition = 2) as z
+	   	 	</when>
+	   	 	<otherwise>
+	   	 		d.user_email_buyer = #{keyword}
+	   	 		and d.deal_condition in (3, 4)) as z
+	   	 	</otherwise>
+	   	 </choose>
+	   	 order by z.auction_no desc
+	   	 limit #{begin}, #{listSize}
+	</select>
+	
+	<!-- 후기 등록시 거래정보  -->
+	<select id="dealInfo" parameterType="int" resultType="Deal">
+		select *
+		  from deal
+		 where auction_no = #{auctionNo}
+	</select>
+	
+	<!-- 후기등록 -->
+	<insert id="insertReview" parameterType="Review" >
+		insert into review (
+		review_title, review_content, deal_no, review_sender, review_receiver, review_score
+		) values (
+			#{reviewTitle},
+			#{reviewContent},
+			#{dealNo},
+			#{reviewSender},
+			#{reviewReceiver},
+			#{reviewScore}
+		)
+	</insert>
+	
+	<!-- 사용자 받은 후기점수 합계 -->
+	<select id="selectUserSumScore" parameterType="Review" resultType="int">
+		select sum(review_score)
+		  from review
+		 group by review_receiver
+		 where review_receiver = #{reviewReceiver}
+	</select>
+	
+	<!-- 후기 한개  -->
+	<select id="selectOneReview" parameterType="Review" resultType="Review">
+		select r.*, 
+			   a.auction_no,
+			   a.auction_title
+		  from review r
+		 inner join deal d
+		    on r.deal_no = d.deal_no
+		 inner join auction a
+		    on d.auction_no = a.auction_no
+		 where r.review_no = #{reviewNo};
+	</select>
+	
+	<!-- 후기 수정 -->
+	<update id="updateReview" parameterType="Review">
+		update review	
+		   set review_score = #{reviewScore},
+		   	   review_title = #{reviewTitle},
+		       review_content = #{reviewContent}
+		 where review_no = #{reviewNo}
+		  
+	</update>
+	
+	<!-- 후기 삭제 -->
+	<delete id="deleteReview" parameterType="Review">
+		delete from review
+		 where review_no = #{reviewNo}
+	</delete>
+	
+	<!-- 파일 정보 -->
+	<select id="selectOneFile" parameterType="UtilFile" resultType="UtilFile">
+		select *
+		  from file
+		 where file_no = #{fileNo}
+	</select>
+	
+	<!-- 거래완료 처리 -->
+	<update id="dealComplete" parameterType="Deal">
+		<selectKey keyProperty="dealUserCondition" resultType="int" order="BEFORE">
+			select  
+			<choose>
+				<when test="dealBuyerCondition == 2">
+					deal_seller_condition
+				</when>
+				<otherwise>
+					deal_buyer_condition
+				</otherwise>
+			</choose>
+			from deal
+		   where auction_no = #{auctionNo}
+		</selectKey>
+		update deal set 
+		<choose>
+			<when test="dealBuyerCondition == 2">
+				deal_buyer_condition = #{dealBuyerCondition}
+			</when>
+			<otherwise>
+				deal_seller_condition = #{dealSellerCondition}
+			</otherwise>
+		</choose>
+		<if test="dealUserCondition == 2">
+			, deal_condition = #{dealUserCondition}
+		</if>
+		where auction_no = #{auctionNo}
+	</update>
+	
+	<!-- 거래 취소 처리 -->
+	<update id="dealCancel" parameterType="Deal">
+		update deal set
+		<choose>
+			<when test="dealBuyerCondition == 3">
+				deal_buyer_condition = #{dealBuyerCondition},
+			</when>
+			<otherwise>
+				deal_seller_condition = #{dealSellerCondition},
+			</otherwise>
+		</choose>
+			deal_condition = 3
+			where auction_no = #{auctionNo}
+	</update>
+</mapper>

@@ -1,0 +1,120 @@
+.category > i {
+	width : 30px;
+}
+.selected {
+	color : #DB1D3B !important;
+	font-weight: bold !important;
+}
+.option_selectbar {
+	width : 980px;
+	height : 45px;
+	background : #F2F2F2;
+}
+#sidebar a {
+	color: black;
+}
+.card-body {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	height : 40px;
+}
+#num1, #num2 {
+	width:72px;
+	height: 23px;
+}
+.card-body > .card-title {
+	line-height : 42px;
+}
+.categorylist li {
+	height : 30px;
+}
+.categorylist li {
+	display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+.option_selectbar .del {
+    display: inline-block;
+    overflow: hidden;
+    width: 9px;
+    height: 9px;
+    margin: -2px 10px 0 6px;
+    background: url(https://ssl.pstatic.net/imgshopping/static/pc-real-2019/img/search/sp_search_v8.png) no-repeat -180px -50px;
+    line-height: 9999px;
+    vertical-align: middle;
+}
+.option_selectbar .clear{
+	margin-left : 14px;
+}
+.option_selectbar .bar {
+	margin: 0 12px;
+    padding: 0 2px;
+    color: #d8d8d8;
+}
+.option_selectbar .clear, .option_selectbar .options {
+	display: inline-block;
+    overflow: hidden;
+    font-size: 12px;
+    color: #6b6b6a;
+    vertical-align: middle;
+    line-height: 45px;
+    font-family: gulim;
+}
+.option_selectbar .options:hover{
+	text-decoration: none;
+}
+
+.option_selectbar .clear .option-clean {
+    display: inline-block;
+    overflow: hidden;
+    width: 12px;
+    height: 13px;
+    margin: -2px 5px 0 0;
+    background: url(https://ssl.pstatic.net/imgshopping/static/pc-real-2019/img/search/sp_search_v8.png) no-repeat -175px -30px;
+    vertical-align: middle;
+}
+.sort_list li {
+	float : left;
+	list-style:none;
+	height: 30px;
+    margin-left: 14px;
+    line-height: 45px;
+}
+.sort_list {
+	margin :0;
+	padding-left: 157px;
+}
+.view_count > select {
+	height : 22px;
+}
+.sort_list:last-child {
+	margin-left : 0;
+}
+
+.sort_list li a{
+	font-family: gulim;
+    color: #959595;
+    font-size: 12px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    text-decoration: none;
+}
+.view_count {
+	line-height: 50px;
+    margin-left: 20px;
+	
+}
+.sort_list li span {
+    display: inline-block;
+    overflow: hidden;
+    width: 7px;
+    height: 7px;
+    margin: -3px 4px 0 0;
+    background: url(https://ssl.pstatic.net/imgshopping/static/pc-real-2019/img/search/sp_search_v8.png) no-repeat -180px -18px;
+    line-height: 9999px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+.sort_list li span.on {
+	width : 7px;
+	height : 7px;
+	background: url(https://ssl.pstatic.net/imgshopping/static/pc-real-2019/img/search/sp_search_v8.png) no-repeat -190px -21px;
+}

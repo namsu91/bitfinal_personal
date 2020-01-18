@@ -1,0 +1,60 @@
+.bg-info {
+	background-color: white !important;
+}
+
+.text-info {
+	font-size: 1.5rem;
+}
+
+.text-gray {
+	color: gray;
+	font-size: x-small;
+}
+
+.my-3.call {
+	text-align: center;
+	font-size: x-large;
+	font-weight: bold;
+}
+
+.call_info {
+	color: gray;
+	font-size: small;
+}
+
+.wrapper {
+	width: 100%;
+}
+
+.text-info {
+	color: white;
+}
+
+.top_row {
+	background: black;
+}
+
+.footer_menu {
+	width: 1000px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+.footer_content {
+	padding-top: 20px;
+	margin: 0;
+}
+
+.footer_third {
+	padding-left: 50px;
+	padding-top: 5px;
+}
+
+.call {
+	font-size: x-large;
+	font-weight: bold;
+}
+
+.col_menu {
+	padding-left: 16px;
+}

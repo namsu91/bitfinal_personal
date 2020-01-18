@@ -1,0 +1,66 @@
+@charset "UTF-8";
+
+.reportModal {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display:none;
+}
+
+.reportModalBack {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgb(0,0,0,0.5);
+}
+
+.reportModalBack>div {
+	width: 500px;
+	height: 600px;
+	border: 1px solid lightgray;
+	border-radius: 5px;
+	overflow: auto;
+	background: white;
+}
+
+.reportModalBack>div>div:first-of-type {
+	font-size: 20px;
+	font-weight: bold;
+	margin: 20px;
+}
+
+.reportContent {
+	width: 90%;
+	height: max-content;
+	min-height: 100px;
+	margin: auto;
+}
+
+.reportContent>div:first-of-type{
+	border-top: 2px solid black;
+	
+}
+
+.reportContent>div {
+	border-bottom: 1px solid lightgray;
+	padding: 10px 0px 10px 0px;
+}
+
+.reportContent>div:nth-child(2n+1) {
+	background: rgb(250, 250, 250)
+}
+
+.reportContent>div>div {
+	margin: 0px 10px 8px 10px;
+}
+
+.reportContent>div>div:first-of-type span:nth-of-type(2) {
+	float: right;
+}
+
+.reportContent>div>div:nth-of-type(2) span {
+	color: gray;
+}

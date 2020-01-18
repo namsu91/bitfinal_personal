@@ -1,0 +1,75 @@
+@charset "UTF-8";
+
+.addReportModal {
+	top: 0px;
+	left: 0px;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display: none;
+	z-index: 55;
+}
+
+.addReportModalBack {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.3);
+}
+
+.addReportModalBack>div {
+	width: 400px;
+	min-height: 400px;
+	height: max-content;
+	border: 1px solid lightgray;
+	border-radius: 5px;
+	overflow: auto;
+	background: white;
+}
+
+.addReportModalBack>div>div {
+	padding: 20px 20px 0px 20px;
+}
+
+.addReportModalBack>div>div>span {
+	font-size: 15px;
+	font-weight: bold;
+	padding-bottom: 10px;
+}
+
+.addReportModalBack textarea {
+	width: 100%;
+	height: 100px;
+	box-sizing: border-box;
+	padding: 10px;
+	margin-top: 10px;
+	resize: none;
+}
+
+.reportReason>div {
+	padding: 5px;
+}
+
+.reportReason div:first-of-type {
+	margin-top: 10px;
+}
+
+.addReportModalBack button {
+	width: 100px;
+	height: 25px;
+	border: none;
+	color: white;
+	background: rgb(252, 79, 79);
+	border-radius: 3px;
+	margin-bottom: 10px;
+}
+
+.addReportModalBack>div>div:last-of-type {
+	width: 65%;
+	display: flex;
+	justify-content: space-between;
+	margin: auto;
+}

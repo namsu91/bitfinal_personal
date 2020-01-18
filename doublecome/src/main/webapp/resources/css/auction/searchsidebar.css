@@ -1,0 +1,134 @@
+footer {
+	border-top:1px solid #eee;
+}
+.checklist > h3 {
+	margin : 0;
+}
+.main {
+	width:100%;
+	border-top:1px solid #eee;
+}
+#wrapper{
+	width: 1250px;
+    background:#fff;
+    margin : 0 auto;
+	display: flex;
+	
+}
+.checklist li a:hover{
+	cursor:pointer
+}
+.accordion > div > h3{
+	margin:0;
+	padding:0;
+}
+.accordion ul li a{
+	transition: 0.2s linear;
+}
+.accordion > div:hover{
+	margin:0;
+	padding:0;
+	cursor:pointer;
+	text-decoration: none;
+}
+#sidebar{
+	height : 100%;
+	font-family: 'Gothic A1', sans-serif;
+	float:left;
+	background:#fff;
+	width:251px;	
+    border-right:1px solid #eee;
+    border-left:1px solid #eee;
+}
+#sidebar h3{
+	color:#262626;
+	text-transform:uppercase;
+	font-size:14px;
+	font-weight:700;
+	letter-spacing:1px;
+	clear:both;
+}
+#cart{padding:0px;}
+#cart .empty{
+	font-style:italic;
+	color:#a0a3ab;
+	font-size:14px;
+	letter-spacing:1px;	
+}
+#sidebar .checklist{
+	padding : 25px;
+}
+.box-line {
+	border-bottom: 1px solid #eee;
+}
+#price_choice  {
+	display: inline-block;
+	overflow: hidden;
+	width: 23px;
+	height: 23px;
+	border: 1px solid #d5d5d5;
+	background: url(https://ssl.pstatic.net/imgshopping/static/pc-real-2019/img/search/sp_search_v8.png) no-repeat -130px -50px;
+	line-height: 9999px;
+	vertical-align: top;
+}
+input[type="checkbox"] {  /* 실제 체크박스는 화면에서 숨김 */
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip:rect(0,0,0,0);
+	border: 0
+}
+.checklist ul {
+	padding: 0;
+	margin: 0;
+	margin-top:10px;
+}
+a {
+	color: #212529;
+	text-decoration:none;
+}
+a:hover { text-decoration: none; }
+
+input[type="checkbox"] + label {
+	display: inline-block;
+	position: relative;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+input[type="checkbox"] + label:before {  /* 가짜 체크박스 */
+	content: ' ';
+	display: inline-block;
+	width: 21px;  /* 체크박스의 너비를 지정 */
+	height: 21px;  /* 체크박스의 높이를 지정 */
+	line-height: 21px; /* 세로정렬을 위해 높이값과 일치 */
+	margin: -2px 3px 0 0;
+	text-align: center; 
+	vertical-align: middle;
+	background: #fafafa;
+	border: 1px solid #cacece;
+	border-radius : 3px;
+	box-shadow: 0px 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+}
+input[type="checkbox"] + label:active:before,
+input[type="checkbox"]:checked + label:active:before {
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+input[type="checkbox"]:checked + label:before {  /* 체크박스를 체크했을때 */ 
+	content: '\2713';  /* 체크표시 유니코드 사용 */
+	text-shadow: 1px 1px #fff;
+	background: #e9ecee;
+    background-position: 0 -91px;
+	border-color: #adb8c0;
+	box-shadow: 0px 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+}
+.checklist ul li{	
+	font-size:14px;
+	font-weight:400;
+	list-style:none;
+	padding : 3px 5px;
+}

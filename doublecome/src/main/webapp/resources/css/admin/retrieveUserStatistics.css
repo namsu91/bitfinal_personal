@@ -1,0 +1,58 @@
+@charset "UTF-8";
+
+.lineChartType {
+	height: 20px;
+	margin: 20px 0px 20px 0px;
+}
+
+.lineChartType span {
+	margin-left: 35%;
+	color: lightgray;
+	cursor: pointer;
+}
+
+.lineChartType > div{
+	margin-right: 15%;
+	float: right;
+    display: flex;
+    width: 200px;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.lineChartType > div select{
+	height: 25px;
+}
+.lineChartType > div button{
+	border: none;
+	color: white;
+	background: rgb(252, 79, 79);
+	border-radius: 3px;
+	cursor: pointer;
+	height: 25px;
+}
+
+.clickedType {
+	color: black !important;
+	font-weight: bold;
+}
+
+#lineChart {
+	width: 1000px;
+}
+
+.chartGroup {
+	width: 1000px;
+	height: 300px;
+}
+
+#pieChart1, #pieChart2, #pieChart3 {
+	width: 330px;
+	height: 270px;
+	float: left;
+}
+
+.c3-chart-arcs-title {
+	font-weight: bold;
+	font-size: 15px;
+}

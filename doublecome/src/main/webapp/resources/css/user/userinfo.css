@@ -1,0 +1,440 @@
+#bidList{
+	
+	position: relative;
+    top: 100px;
+    
+}
+
+#bidTitle{
+	position: relative;
+    
+    padding: 10px;
+    margin: 10px auto;
+    border-bottom: 2px solid #969696;
+	
+}
+
+html, body {
+
+}
+
+td svg, span svg{
+	color :#969696;
+}
+
+
+	#bg{
+		
+	}
+
+	#pageBox{
+		
+		margin: auto;
+		position: relative;
+		width: 1000px;
+		height: 320px;
+		top: 25px;
+		background: white;
+			
+		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	}
+	
+	#userInfoTitle{
+		position: relative;
+	    font-size: 25px;
+	}
+	
+	#pfimgbox{
+        margin: 25px;
+		position: absolute;
+		top: 50px;
+		align-content: flex-end;
+
+    }
+    #scoreBox{
+        left: 25px;
+        top: 275px;
+		position: absolute;
+		width: 200px;
+        height: 200px;
+        border: #333 solid 1px;
+    }
+ #infoContainer{
+ 	position:relative;
+ 	left: 22%;
+ 	width: 60%;
+ 	padding: 10px;
+ }  
+ 
+ table{
+ 	border-top: 2px solid #969696;
+ 	border-collapse: collapse;
+ }
+ th, td{
+	padding: 14px 30px;
+    border-bottom: 1px solid #F2F2F2;
+ }
+ th{
+ width: 150px;
+ }
+ td{
+ width: 400px;
+ }
+
+#deleteBtn{
+	z-index: 100;
+	cursor: pointer;
+	position: absolute;
+	width: 120px;
+	height: 40px;
+	left: 850px;
+	top: 200px;
+	line-height: 40px;
+       text-align: center;
+	font: bold;
+	font-size: 15px;
+
+       color: white;
+	background: #DB1D3B;
+	border: 0;
+}
+
+#updateFormBtn{
+	z-index: 100;
+	cursor: pointer;
+	position: absolute;
+	width: 120px;
+	height: 40px;
+	left: 850px;
+	top: 150px;
+	line-height: 40px;
+       text-align: center;
+	font: bold;
+	font-size: 15px;
+
+       color: white;
+	background: #DB1D3B;
+	border: 0;
+}
+
+#historyGoBtn{
+		z-index: 100;
+	 	cursor: pointer;
+		position: absolute;
+		width: 120px;
+		height: 40px;
+		left: 850px;
+		top: 100px;
+		line-height: 40px;
+        text-align: center;
+		font: bold;
+		font-size: 15px;
+
+        color: white;
+		background: #DB1D3B;
+		border: 0;
+	}
+
+
+	#pageBox .registInputBox{
+		position: relative;
+		/*width: 600px;*/
+		height: 0px;
+		left: 400px;
+		/*border: 1px solid #000000;*/
+		
+	
+		background: rgb(255, 255, 255);
+		
+	}
+	
+	#registInputBox1{
+		top: 0px;
+	}
+	#registInputBox2{
+		top: 50px;
+	}
+	#registInputBox3{
+		top: 100px;
+	}
+	#registInputBox4{
+		top: 150px;
+	}
+
+	#pageBox .registInputBox> #icon{
+		position: relative;
+		/*width: 50px;
+		height: 50px;
+		left: 10px;
+		top: 20px; */
+		color: rgb(211, 211, 211);
+		background: rgb(255, 255, 255);
+		align-self: center;
+	}
+
+	#pageBox .registInputBox > #alert{
+		
+		width: 300px;
+		height: 15px;
+		left: 20px;
+		/*top: 70px;*/
+		border: none;
+		/*background: #FF6464;*/
+		
+	}
+	.registInput{
+		
+		border: none;
+		font-size: 15px;
+		border-bottom: solid 1px rgb(211, 211, 211);
+		
+	}
+	input:focus {outline:none;}
+	#pageBox .registInputBox > #registInput:nth-child(1){
+		
+		left: 330px;
+		top: 25px;
+
+		
+	}
+	mybid{
+		position: relative;
+	}
+
+
+/*
+Author: Mojtaba Seyedi
+Author URI: http://mojtabaseyedi.com
+*/
+html {
+	box-sizing: border-box;
+  }
+  html *,
+  html *::before,
+  html *::after {
+	box-sizing: inherit;
+  }
+  
+ /*  body {
+	background-color: #eee;
+	font: 100%/1.6 Helvetica;
+	color: #fff;
+	margin: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+  } */
+  
+  .uploader {
+	
+  }
+  
+  .uploader__input {
+	display: none;
+  }
+  
+  .uploader__label {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 200px;
+	height: 200px;
+	
+	text-align: center;
+	background: #fff;
+	border-radius: 7px;
+	/* border: 3px solid #eee;
+	transition: all .2s ease;
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+		-ms-user-select: none;
+			user-select: none;
+	cursor: pointer;
+	background-position: 0 0, 15px 15px;
+	background-size: 30px 30px; */
+  }
+  .uploader__label > img{
+    max-width: 100%;
+    max-height: 100%;
+  	border-radius: 7px;
+  	
+  }
+  
+  .uploader__label:hover {
+	border-color: #FF6464;
+  }
+  .uploader__label.hover {
+	border: 3px solid #FF6464;
+	box-shadow: inset 0 0 0 6px #eee;
+	background-color: #616161;
+	background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.25) 25%, transparent 0, transparent 75%, rgba(0, 0, 0, 0.25) 0), linear-gradient(45deg, rgba(0, 0, 0, 0.25) 25%, transparent 0, transparent 75%, rgba(0, 0, 0, 0.25) 0);
+  }
+  
+  
+  .uploader__wrapper {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  }
+  
+  .uploader__file {
+	position: absolute;
+/*	left: 0.5em;
+	top: 0em; */
+	display: block;
+	width: 200px;
+	height: 200px;
+	border-radius: 3%;
+	z-index: 1;
+	opacity: 0;
+	-webkit-transform: translate3d(0, -1em, 0) scale(0);
+			transform: translate3d(0, -1em, 0) scale(0);
+	transition: all 0.5s cubic-bezier(0.02, 0.01, 0.47, 1);
+  }
+  .uploader__file.show {
+	opacity: 1;
+	-webkit-transform: translate3d(0, 0, 0) scale(1);
+			transform: translate3d(0, 0, 0) scale(1);
+  }
+  
+  .uploader__clipalt {
+	fill: none;
+	stroke: #ccc;
+	stroke-width: 5px;
+	stroke-miterlimit: 10;
+  }
+  
+  .uploader__clip {
+	stroke-dasharray: 391.592px;
+	stroke-dashoffset: -391.592px;
+	fill: none;
+	stroke: #333;
+	stroke-width: 5px;
+	stroke-miterlimit: 10;
+  }
+  .uploading .uploader__clip {
+	transition: all .5s linear;
+  }
+  
+  .text {
+	color: #333;
+	margin: 1em 0 0;
+  }
+  
+  
+  /* card */
+  
+  .card_container1 {
+  position: relative;
+  min-height: 150px;
+  display: inline-block;
+  width: 49%;
+  
+ /*  border: 3px sold #DB1D3B;  */
+  
+  background-color: #fff;
+  padding: 1px 20px 20px 1px;
+  margin: 10px auto;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+ .card_container0 {
+  position: relative;
+  display: inline-block;
+  min-height: 150px;
+  position: relative;
+  width: 49%;
+  right: -2%;  
+ /*  border: 3px sold #DB1D3B;  */
+  
+  background-color: #fff;
+  padding: 1px 20px 20px 1px;
+  margin: 10px auto;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+
+.card_container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.card_image{
+ 	height: 130px;
+    width: 130px;
+    position: absolute;
+    right: 0px;
+    margin: 10px;
+}
+.vertical-line{ /* Use only border style */
+
+/* 
+   heigth: 150px;
+   float: left; 
+   border: 1px inset #DB1D3B; 
+   margin: 0px 10px 0px -10px;
+ */
+ }
+#aution .aution_title {
+	font-size: 20px;
+	color: black;
+	width: 300px;
+	padding: 20px 0px 0px 20px;
+	
+}
+
+#aution{
+	height: 150px;
+    width: 490px;
+}
+
+.card_container0 .card_autionTitle,
+.card_container1 .card_autionTitle {
+	font-size: 20px;
+	height: 45px;
+    color: black;
+    
+    overflow: hidden;    
+     white-space: nowrap;	
+    text-overflow: ellipsis;
+ 
+}
+
+
+
+
+
+.card_sub_now, .card_sub_date{
+	width: 500px;
+	padding: 5px 5px 5px 50px;
+	font-size: 12px;
+}
+.card_sub_now{
+	width: 300px;
+	bottom: 10px;
+    position: absolute;
+	
+}
+.card_sub_date{
+	width: 350px;
+	bottom: 40px;
+    position: absolute;
+	
+}
+
+
+.card_content{
+	font-size: 20px;
+    color: black;
+    margin: 10px;
+}
+

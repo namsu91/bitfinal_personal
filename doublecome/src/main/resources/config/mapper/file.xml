@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.doublecome.repository.mapper.FileMapper">	
+	<!-- 파일 정보 -->
+	<select id="selectOneFile" parameterType="int" resultType="UtilFile">
+		select *
+		  from file
+		 where file_no = #{fileNo}
+	</select>
+	
+	<select id="maxFileGroupCode" resultType="int">
+		select max(file_group_code)
+		from file
+	</select>
+	
+	<insert id="addFile" parameterType="UtilFile" >
+		<selectKey order="AFTER" keyProperty="fileNo" keyColumn="file_no" resultType="int">
+			select max(file_no)
+			  from file
+		</selectKey>
+		insert into file (file_group_code, file_origin_name, file_system_name, file_path)
+		values (#{fileGroupCode}, #{fileOriginName}, #{fileSystemName}, #{filePath})
+	</insert>
+	
+	<!-- 유저 프로필 사진 -->
+	<insert id="addProfile" parameterType="UtilFile" >
+		<choose>
+			<when test="fileNo == 1">		
+		insert into file (file_group_code,  file_origin_name,  file_system_name, file_path)
+ 		VALUES ( #{fileGroupCode}, #{fileOriginName}, #{fileSystemName}, #{filePath}) ;
+			</when>
+			<otherwise>
+		replace into file (file_no, file_group_code,  file_origin_name,  file_system_name, file_path)
+ 		VALUES (#{fileNo}, #{fileGroupCode}, #{fileOriginName}, #{fileSystemName}, #{filePath}) ;
+			</otherwise>
+		</choose>
+	</insert>
+	<delete id="deleteProfile" parameterType="int">
+		delete from file
+		where file_no = #{fileNo}	
+	</delete>
+	
+	<!-- 해당경매글 파일 가져오기 -->
+	<select id="selectFile" parameterType="int" resultType="UtilFile">
+		select max(file_no ) over (partition by f.file_group_code) as file_no, 
+		  from file f
+		 inner join auction a
+		    on f.file_group_code = a.file_group_code
+		 where a.auction_no = #{auctionNo}
+	</select>
+</mapper>

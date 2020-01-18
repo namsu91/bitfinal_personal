@@ -1,0 +1,32 @@
+.categoryBox {
+	display: flex;
+	justify-content: flex-start;
+	align-content: center;
+	flex-wrap: wrap;
+}
+
+.categoryBox input[type=checkbox] {
+	display: none;
+}
+
+.categoryBox label {
+	padding: 0px 10px 0px 10px;
+	letter-spacing: 1px;
+	cursor: pointer;
+}
+
+.categoryBox>div {
+    width: max-content;
+    height: 25px;
+    color: black;
+    text-align: center;
+    line-height: 25px;
+    font-size: 13px;
+    margin: 2px 5px 2px 5px;
+}
+
+.categoryClicked {
+	background: rgb(252, 79, 79);
+	border-radius: 10px;
+	color: white !important;
+}

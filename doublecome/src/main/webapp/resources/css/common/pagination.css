@@ -1,0 +1,103 @@
+@charset "UTF-8";
+
+.pagination {
+	width: 100%;
+	height: max-content;
+	margin-top: 10px;
+	padding: 0px !important;
+	border-bottom: none !important;
+}
+
+.pagination>div {
+	width: max-content;
+	height: 34px;
+	margin: auto !important;
+}
+
+.page, .pageArrowPrev, .pageArrowNext {
+	height: 100%;
+	width: 30px;
+	box-sizing: border-box;
+	margin: 2px;
+	line-height: 30px;
+	font-size: 12px;
+	text-align: center;
+	float: left;
+}
+
+.page:hover, .pageArrowPrev:hover, .pageArrowNext:hover {
+	transform: scale(1.2);
+	font-weight: bold;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.clickedPage {
+	height: 100%;
+	width: 30px;
+	box-sizing: border-box;
+	margin: 2px;
+	line-height: 30px;
+	font-size: 12px;
+	text-align: center;
+	float: left;
+	border: 1px solid #DB1D3B;
+/* 	background: lightcoral; */
+/* 	border-radius: 5px; */
+}
+
+.clickedPage:hover {
+	cursor: text;
+	text-decoration: none;
+	transform: none;
+}
+
+.secondPagination {
+	width: 100%;
+	height: max-content;
+	margin-top: 10px;
+}
+
+.secondPagination>div {
+	width: max-content;
+	height: 34px;
+	margin: auto !important;
+}
+
+.secondPage, .secondPageArrowPrev, .secondPageArrowNext {
+	height: 100%;
+	width: 30px;
+	box-sizing: border-box;
+	margin: 2px;
+	line-height: 30px;
+	font-size: 12px;
+	text-align: center;
+	float: left;
+}
+
+.secondPage:hover, .secondPageArrowPrev:hover, .secondPageArrowNext:hover
+	{
+	transform: scale(1.2);
+	font-weight: bold;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.secondClickedPage {
+	height: 100%;
+	width: 30px;
+	box-sizing: border-box;
+	margin: 2px;
+	line-height: 30px;
+	font-size: 12px;
+	text-align: center;
+	float: left;
+	background: lightcoral;
+	border-radius: 5px;
+}
+
+.secondClickedPage:hover {
+	cursor: text;
+	text-decoration: none;
+	transform: none;
+}

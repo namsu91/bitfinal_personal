@@ -1,0 +1,11 @@
+@charset "UTF-8";
+      .picture{
+        margin: auto;
+        width: 750px;
+        height: 750px;
+      }
+      img{
+        float: left;
+        width: 100%;
+        height: 100%;
+      }
