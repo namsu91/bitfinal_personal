@@ -11,9 +11,9 @@
         
         
         <websocket:handlers>
-        	<websocket:mapping handler="messenger" path="/chatting.do"/>
-        	<websocket:mapping handler="LiveAuctionChatHandler" path="/chat.do"/>
-        	<websocket:mapping handler="LiveAuctionBidHandler" path="/bid.do"/>
+        	<websocket:mapping handler="messenger" path="/ws/chatting.do"/>
+        	<websocket:mapping handler="LiveAuctionChatHandler" path="/ws/chat.do"/>
+        	<websocket:mapping handler="LiveAuctionBidHandler" path="/ws/bid.do"/>
         	<websocket:handshake-interceptors>
         		<bean class="kr.co.doublecome.util.interceptor.HandShakeInterceptor"/>
         	</websocket:handshake-interceptors>

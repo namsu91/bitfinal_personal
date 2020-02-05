@@ -16,7 +16,7 @@
                			   http://www.springframework.org/schema/tx/spring-tx.xsd">
       
       <!-- mybatis db설정 파일 경로 설정 설정이 비었을경우 없어도 무방 -->         			   
-      <context:property-placeholder location="classpath:config/mybatis/db.properties"/>
+      <context:property-placeholder location="classpath:config/mybatis/localdb.properties"/>
       
       <!-- 데이터프로퍼티스에서 정보를 커넥트 풀에 넘겨줌 -->
       <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"

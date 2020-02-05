@@ -42,7 +42,7 @@
 			<c:set var="now" value="<%=new java.util.Date()%>" />
 				<div class="counter-class"
 					data-date="<fmt:formatDate value="${auction.auctionLimitDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-					data-endDate="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>">
+					data-now="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>">
 					<div class="timer-font">
 						<span class="counter-days"><i class="fas fa-play"></i></span> 일
 					</div>
@@ -124,6 +124,7 @@
 		let type = '${type}'
 		let auctionNo = ${auction.auctionNo}
 	</script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 	<script src="<c:url value="/resources/js/auction/loopcounter.js" />"></script>
 	<script src="<c:url value="/resources/js/liveauction/chat.js"/>"></script>
 	<script src="<c:url value="/resources/js/liveauction/bid.js"/>"></script>

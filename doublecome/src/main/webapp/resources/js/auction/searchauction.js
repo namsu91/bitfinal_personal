@@ -1,7 +1,6 @@
 $(document).ready(e => {
 	$("#price_filter li a, #price_choice, #bidcount li a, a.category, #date li a").unbind("click").click(e => {
 		if (selectCheck(e) == false) {
-			console.log("실패")
 			return;
 		} 
 		$("#sort_list span").removeClass("on")
@@ -19,7 +18,6 @@ $(document).ready(e => {
 //ajax 처리
 function searchAjax(e) {
 	if(typeof(e) == 'string'){
-		console.log(e);
 	} else{		
 		e.preventDefault();
 	}
@@ -28,7 +26,6 @@ function searchAjax(e) {
 	let ele = e.target;
 	let flag = true;
 	let priceChoice = [];
-	let limits = [];
 	
 	for (let option of filter){
 		if (flag == true) {
@@ -40,7 +37,10 @@ function searchAjax(e) {
 				+","+ '"'+ endPrice + '"' + " : " + priceChoice[1]				
 			} else if ($(option).data("name") == "limits") {
 				let startLimit ="startLimit"
-				limit = $(option).data("value");
+				let limit = $(option).data("value");
+				if (limit == "1day") limit = "1";
+				else if (limit == "2day") limit = "2";
+				else if (limit == "3day") limit = "3";
 				sendData += '"'+ startLimit+ '"' + " : " + limit
 			} else if ($(option).data("name") == "bidCount") {
 				let startBidCount ="startBidCount"
@@ -64,7 +64,10 @@ function searchAjax(e) {
 			+","+ '"'+ endPrice + '"' + " : " + priceChoice[1]				
 		} else if ($(option).data("name") == "limits") {
 			let startLimit ="startLimit"
-			limit = $(option).data("value");
+			let limit = $(option).data("value");
+			if (limit == "1day") limit = "1";
+			else if (limit == "2day") limit = "2";
+			else if (limit == "3day") limit = "3";
 			sendData += ","+ '"'+ startLimit+ '"' + " : " + limit
 		} else if ($(option).data("name") == "bidCount") {
 			let startBidCount ="startBidCount"
@@ -91,7 +94,6 @@ function searchAjax(e) {
 		}
 	}
 	sendData += "}";
-	console.log(sendData)
 	let options = {
 		url : "searchActionList.do",
 		type : "POST",

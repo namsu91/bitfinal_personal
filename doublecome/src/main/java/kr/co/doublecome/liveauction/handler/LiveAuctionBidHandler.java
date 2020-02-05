@@ -33,6 +33,7 @@ public class LiveAuctionBidHandler extends TextWebSocketHandler{
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		Map<String, Object> userData = session.getAttributes();
+		
 		int auctionNo = (int)userData.get("auctionNo");
 		
 		Map<String, WebSocketSession> users = channels.get(auctionNo);
@@ -47,6 +48,7 @@ public class LiveAuctionBidHandler extends TextWebSocketHandler{
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		//접속자 정보 확인
 		Map<String, Object> userData = session.getAttributes();
+		
 		int auctionNo = (int)userData.get("auctionNo");
 		String userId = (String)userData.get("userId");
 		
@@ -120,6 +122,11 @@ public class LiveAuctionBidHandler extends TextWebSocketHandler{
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		Map<String, Object> userData = session.getAttributes();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
 		int auctionNo = (int)userData.get("auctionNo");
 		
 		Map<String, WebSocketSession> users = channels.get(auctionNo);

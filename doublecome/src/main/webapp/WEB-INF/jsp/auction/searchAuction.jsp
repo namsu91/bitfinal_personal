@@ -59,9 +59,9 @@
       <div class="checklist box-line accordion" id="date">
           <div><h3>시간</h3></div>
           <ul>
-            <li><a href="<c:url value="/auction/searchActionList.do" />" class="time-filter cnkfilter" data-name="limits" data-selected="" data-value="1" title="오늘까지">오늘까지</a></li>
-            <li><a href="<c:url value="/auction/searchActionList.do" />" class="time-filter cnkfilter" data-name="limits" data-selected="" data-value="2" title="내일까지">내일까지 </a></li>
-            <li><a href="<c:url value="/auction/searchActionList.do" />" class="time-filter cnkfilter" data-name="limits" data-selected="" data-value="3" title="3일 이상" >3일 이상 </a></li>
+            <li><a href="<c:url value="/auction/searchActionList.do" />" class="time-filter cnkfilter" data-name="limits" data-selected="" data-value="1day" title="오늘까지">오늘까지</a></li>
+            <li><a href="<c:url value="/auction/searchActionList.do" />" class="time-filter cnkfilter" data-name="limits" data-selected="" data-value="2day" title="내일까지">내일까지 </a></li>
+            <li><a href="<c:url value="/auction/searchActionList.do" />" class="time-filter cnkfilter" data-name="limits" data-selected="" data-value="3day" title="3일 이상" >3일 이상 </a></li>
           </ul>
       </div>
       <div class="checklist box-line accordion" id="bidcount">

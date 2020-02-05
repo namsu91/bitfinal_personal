@@ -2,6 +2,7 @@ package kr.co.doublecome.liveauction.handler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ public class LiveAuctionChatHandler extends TextWebSocketHandler{
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		Map<String, Object> userData = session.getAttributes();
+
 		int auctionNo = (int)userData.get("auctionNo");
 		
 		Map<String, WebSocketSession> users = channels.get(auctionNo);
@@ -51,6 +53,7 @@ public class LiveAuctionChatHandler extends TextWebSocketHandler{
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		Map<String, Object> userData = session.getAttributes();
+
 		int auctionNo = (int)userData.get("auctionNo");
 		
 		Map<String, WebSocketSession> users = channels.get(auctionNo);

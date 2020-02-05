@@ -1,5 +1,20 @@
+
+
 let key;
 let cnt = 0;
+
+let limit = new Date($('.counter-class').data('date'));
+let now = new Date($('.counter-class').data('now')) 
+//해당글 리밋시간 지날시 모든이벤트 off
+
+let timer = limit.getTime() - now.getTime() - 1000;
+if (timer > 0) {
+	setTimeout(() => {
+		endAuction("기한 마감으로")
+	}, timer)
+}
+
+
 $("#openModalBtn").click(() => {
 	$(".realTModal").show();
 })

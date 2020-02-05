@@ -1,17 +1,19 @@
 html, body {
 }
- html *,
+/*  html *,
   html *::before,
   html *::after {
 	box-sizing: inherit;
-  }
+  } */
 td svg, span svg{
 	color :#969696;
 }
 
-	#bg{
-
-	}
+#bg{
+min-height: max-content;
+    margin-top: 25px;
+    margin-bottom: 225px;
+}
 
 	#pageBox{
 		
@@ -19,9 +21,9 @@ td svg, span svg{
 		position: relative;
 		width: 1000px;
 		height: 320px;
-		top: 25px;
+		/* top: 25px; */
 		background: white;
-		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+		/* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
 	}
 	
 	#userInfoTitle{
@@ -51,18 +53,18 @@ td svg, span svg{
  	padding: 10px;
  }  
  
- table{
+ #table{
  	border-top: 2px solid #969696;
  	border-collapse: collapse;
  }
- th, td{
+ #th, #td{
 	padding: 14px 30px;
     border-bottom: 1px solid #F2F2F2;
  }
- th{
+ #th{
  width: 150px;
  }
- td{
+ #td{
  width: 300px;
  }
 
@@ -70,8 +72,8 @@ td svg, span svg{
 		z-index: 100;
 		cursor: pointer;
 		position: absolute;
-		width: 108px;
-		height: 38px;
+		width: 120px;
+		height: 40px;
 		left: 850px;
 		top: 150px;
 		line-height: 40px;

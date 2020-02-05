@@ -2,9 +2,9 @@ jQuery(document).ready(function($){
 	window.loopcounter = function( idWarp ) {
 		if(typeof idWarp!= 'undefined'){
 			date = $('.'+idWarp).data('date');
-			let endDate = $('.'+idWarp).data('endDate')
+			let endDate = $('.'+idWarp).data('now')
 			let start = new Date( date );
-			let end   = new Date();
+			let end   = new Date( endDate );
 			let diff  = new Date( start - end );
 			let time  = diff/1000/60/60/24;
 			let day = parseInt(time);

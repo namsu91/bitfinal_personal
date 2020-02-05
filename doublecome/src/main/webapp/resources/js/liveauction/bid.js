@@ -2,10 +2,8 @@ let bidWs = null;
 
 $(() => {
   // 접속할 주소를 설정 : 웹소켓 핸들러 구현 클래스와 연결된 URL
-  bidWs = new WebSocket("wss://192.168.0.36:8443/doublecome/bid.do");
-  bidWs.onopen = () => {
-    console.log("연결성공");
-  };
+  bidWs = new WebSocket(`wss://doublecome.shop:443/doublecome/ws/bid.do?auctionNo=${auctionNo}`);
+  bidWs.onopen = () => {};
 
   bidWs.onmessage = evt => {
     console.log("데이터 옴");
@@ -19,13 +17,9 @@ $(() => {
     
   };
 
-  bidWs.onerror = evt => {
-    console.log("웹소켓 에러 발생 : " + evt.data);
-  };
+  bidWs.onerror = evt => {};
 
-  bidWs.onclose = () => {
-    console.log("연결종료");
-  };
+  bidWs.onclose = () => {};
 });
 
 function bid() {
@@ -44,7 +38,6 @@ function bid() {
 function purchase() {
   let price = $(".nowBid span:eq(1)").text();
   let bidType = "purchase";
- console.log(price);
   if (price != "") {
     bidWs.send(JSON.stringify({ bidType, price }));
   }
@@ -57,9 +50,7 @@ $("#sendBidBtn").click(() => {
 });
 
 $("#sendPurchaseBtn").click(() => {
-  if (confirm("즉시구매하시겠습니까?")) {
-    purchase();
-  }
+	swalConfirm("즉시구매하시겠습니까?",purchase)  
 });
 
 // 입찰알림 삭제
@@ -71,22 +62,22 @@ function soloMessage(dataObj) {
   if (dataObj.access == "denied") {
 	  switch (dataObj.code) {
 	case '1':
-		alert("로그인 후에 이용하실 수 있습니다.");
+		Swal.fire("로그인 후에 이용하실 수 있습니다.");
 		break;
 	case '2':
-		alert("최소 입찰 금액보다 낮은 금액으로 입찰 하실 수 없습니다.");		
+		Swal.fire("최소 입찰 금액보다 낮은 금액으로 입찰 하실 수 없습니다.");		
 		break;
 	case '3':
-		alert("즉시구매 금액과 다른 금액으로 구매 하실 수 없습니다.");		
+		Swal.fire("즉시구매 금액과 다른 금액으로 구매 하실 수 없습니다.");		
 		break;
 	}
     return;
   }
 
   if (dataObj.bidType == "bidding") {
-    alert("입찰에 성공하셨습니다.");
+	Swal.fire("입찰에 성공하셨습니다.");
   } else {
-    alert("즉시구매에 성공하셨습니다.");
+	Swal.fire("즉시구매에 성공하셨습니다.");
   }
 }
 
@@ -106,17 +97,7 @@ function groupMessage(dataObj){
 	        $(ele).text(dataObj.maxPrice);
 	      });
 	    } else {
-	      $(".auctionInfo").html(
-	        $(`      <div style="width: 100%;">
-	        <h2>즉시구매로</h2>
-	      </div>
-	      <div style="width: 100%;">
-	        <h2>경매종료</h2>
-	      </div>`)
-	      );
-
-	      
-	      $(".realTModal").remove();
+	      endAuction("즉시 구매로");
 
 	      $bidSpace = $(".bidSpace");
 	      $bid = $(`<div class="bid">
@@ -144,7 +125,7 @@ function addCommas(x) {
 	 let val = x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	 console.dir(val)
 	 if(!val.endsWith("000")) {
-		 alert("입력은 천원단위 입니다.")
+		 Swal.fire("입력은 천원단위 입니다.")
 		 return "";
 	 }
 	 return val;
@@ -155,9 +136,35 @@ function checkPrice($bid) {
 	 if($bid.val() > minPrice){
 		 return true;
 	 }
-	 alert("최고 입찰가보다 큰 금액을 입력해주세요.");
+	 Swal.fire("최고 입찰가보다 큰 금액을 입력해주세요.");
 	 $bid.val("");
 	 return false;
 }
 
+function endAuction(msg){
+    $(".auctionInfo").html(
+	        $(`<div style="width: 100%;">
+	        <h2>${msg}</h2>
+	      </div>
+	      <div style="width: 100%;">
+	        <h2>경매종료</h2>
+	      </div>`)
+	      );
+	$(".realTModal").remove();
+}
 
+function swalConfirm(msg,callback){
+	Swal.fire({
+		  title: msg,
+		  icon: 'question',
+		  showCancelButton: true,
+		  confirmButtonColor: '#3085d6',
+		  cancelButtonColor: '#d33',
+		  confirmButtonText: '확인',
+		  cancelButtonText: '취소',
+		}).then((result) => {
+		  if (result.value) {
+			  calback();
+		  }
+		})
+}

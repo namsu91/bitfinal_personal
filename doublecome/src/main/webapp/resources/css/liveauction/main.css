@@ -220,8 +220,8 @@ html, body, .content {
 	position: relative;
 	font-size: 13px;
 	color: gray;
-	left: 107px;
-	top: -25px;
+	left: -105px;
+	top: 3px;
 	line-height: 23px;
 	z-index: 1;
 }
@@ -296,4 +296,8 @@ html, body, .content {
 .btns a {
 	color: white;
 	margin-left: 20px;
+}
+
+hr{
+	margin-bottom:0px;
 }

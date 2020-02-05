@@ -2,6 +2,7 @@ package kr.co.doublecome.util.interceptor;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,9 +19,9 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor{
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) throws Exception {
+		
 		 ServletServerHttpRequest ssreq = (ServletServerHttpRequest) request;
 	     HttpServletRequest req =  ssreq.getServletRequest();
-
 		 
 		 Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		 
@@ -41,9 +42,10 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor{
 		 }
 		 attributes.put("color",color);
 		 
-		 Integer auctionNo = (Integer)req.getSession().getAttribute("auctionNo");
-		 if(auctionNo != null) {
-			 attributes.put("auctionNo",auctionNo);			 
+		 //경매번호 추출
+		 if(req.getParameter("auctionNo") != null) {			 
+			 Integer auctionNo = Integer.parseInt(req.getParameter("auctionNo"));
+			 attributes.put("auctionNo",auctionNo);
 		 }
 		 
 		return super.beforeHandshake(request, response, wsHandler, attributes);

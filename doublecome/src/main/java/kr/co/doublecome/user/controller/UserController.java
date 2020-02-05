@@ -53,7 +53,7 @@ public class UserController {
 
 	/* NaverLoginBO */
 	private NaverLoginBO naverLoginBO;
-	private String apiResult = null;
+	
 
 	@Autowired
 	private void setNaverLoginBO(NaverLoginBO naverLoginBO) {
@@ -63,13 +63,10 @@ public class UserController {
 	// 로그인
 	@RequestMapping("/loginForm.do")
 	public void loginForm(String result, Model model, HttpSession session) throws Exception {
-
 		/* 네이버아이디로 인증 URL을 생성하기 위하여 naverLoginBO클래스의 getAuthorizationUrl메소드 호출 */
 		String naverAuthUrl = naverLoginBO.getAuthorizationUrl(session);
 		// 네이버 로그인 창 URL
 		model.addAttribute("url", naverAuthUrl);
-
-		
 	}
 	
 	//로그인 실패
@@ -114,16 +111,12 @@ public class UserController {
 			@RequestParam String state, 
 			HttpSession session,
 			HttpServletRequest req) throws Exception {
-
 		OAuth2AccessToken oauthToken;
 		oauthToken = naverLoginBO.getAccessToken(session, code, state);
-		// 로그인 사용자 정보를 읽어온다.
-		apiResult = naverLoginBO.getUserProfile(oauthToken);
-		model.addAttribute("result", apiResult);
-
+		String apiResult = naverLoginBO.getUserProfile(oauthToken);
+		
 		JsonParser jsonParser = new JsonParser();
 		JsonElement jsonElement = jsonParser.parse(apiResult);
-
 		JsonElement response = jsonElement.getAsJsonObject().get("response");
 		String email = response.getAsJsonObject().get("email").getAsString();
 		String nickname = response.getAsJsonObject().get("nickname").getAsString();
@@ -136,24 +129,17 @@ public class UserController {
 			model.addAttribute("user", u);
 			return "user/joinForm2";
 		}
-
 		UserDetails u = userService.loadUserByUsername(email);
 		SecurityContext sc = SecurityContextHolder.getContext();
-		// 아이디, 패스워드, 권한을 설정합니다. 아이디는 Object단위로 넣어도 무방하며
-		// 패스워드는 null로 하여도 값이 생성됩니다.
 		sc.setAuthentication(new UsernamePasswordAuthenticationToken(u, null, u.getAuthorities()));
 		HttpSession APIsession = req.getSession(true);
-
-		// 위에서 설정한 값을 Spring security에서 사용할 수 있도록 세션에 설정해줍니다.
 		APIsession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
-
-		return "/main";
+		return "user/redirectMain";
 	}
 
 	// 이메일 찾기 페이지, 이메일 찾기
 	@RequestMapping("/findEmailPassForm.do")
 	public String findEmailForm(String userPhnum, Model model) throws Exception {
-
 		if (service.findEmail(userPhnum) == null) {
 			model.addAttribute("email", "가입된 메일이 없습니다");
 			return "user/findForm";
@@ -179,8 +165,8 @@ public class UserController {
 	@RequestMapping("/checkAuction.do")
 	@ResponseBody
 	public List<Auction> checkAuction (String email) throws Exception {
-		
-		List<Auction> a = service.checkAuction(email); 
+		List<Auction> a = service.checkAuction(email);
+		if(a.isEmpty() == false) return a;
 		a = service.checkDeal(email);
 		return a;
 	}
@@ -244,18 +230,17 @@ public class UserController {
 	public void userInfo() throws Exception {
 	}
 
-
-
 	// 마이페이지 - 회원 정보 수정
 	@RequestMapping("/userInfoUpdate.do")
-	public void userInfoUpdate(/* @RequestParam(value="userEmail") */ String userEmail,
-			/* @RequestParam(value="userPass") */ String userPass, Model model) throws Exception {
+	public void userInfoUpdate( 
+			String userEmail,
+			String userPass, 
+			Model model) throws Exception {
 		User user = new User();
 		user.setUserEmail(userEmail);
 		user.setUserPass(userPass);
 		model.addAttribute("user", service.selectUserInfo(user));
 	}
-	
 	// 마이페이지 -프로필 이미지 삭제
 	@RequestMapping("/deleteProfile.do")
 	@ResponseBody
@@ -264,24 +249,23 @@ public class UserController {
 		fileService.deleteProfile(user); 
 		service.updateUserDefaultProfile(email);
 	}
-
 	// 마이페이지 - 회원 정보 수정 버튼
 	@RequestMapping("/userUpdate.do")
-	public String updateUser(User user, Principal p, HttpServletRequest req, HttpServletResponse res,
+	public String updateUser(
+			User user, 
+			HttpServletRequest req, 
+			HttpServletResponse res,
 			@RequestParam("file") MultipartFile file) throws Exception {
 		User u = service.selectUserInfoByName(user.getUserEmail());
-		
 		//비밀번호 수정 
 		if(user.getUserPass().length() != 0)
 			user.setUserPass(encoder.encode(user.getUserPass())); 
-		
 		//파일 수정
 		if(file.getOriginalFilename().length() != 0 ) {
 			UtilFile util = new UtilFile(); 
 			List<MultipartFile> attach = new ArrayList<>(); 
 			attach.add(file);
 			util.setAttach(attach); 
-			
 			if(u.getFileGroupCode() != 0) {
 				fileService.deleteProfile(u);
 				user.setFileGroupCode(u.getFileGroupCode());
@@ -293,18 +277,14 @@ public class UserController {
 		}else {
 			user.setFileGroupCode(u.getFileGroupCode());
 		}
-			
 		service.updateUser(user);
-		
-		
 		User updatedU = service.selectUserInfoByName(user.getUserEmail());
 		// 세션 등록
 		UserDetails uu = userService.loadUserByUsername(updatedU.getUserEmail());
 		SecurityContext sc = SecurityContextHolder.getContext();
 		sc.setAuthentication(new UsernamePasswordAuthenticationToken(uu, null, uu.getAuthorities()));
-		HttpSession APIsession = req.getSession(true);
-
-		APIsession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
+		HttpSession session = req.getSession(true);
+		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
 		return "redirect:/main.do";
 	}
 
@@ -327,8 +307,10 @@ public class UserController {
 
 	// 비밀번호 수정 패이지
 	@RequestMapping("/findPassForm.do")
-	public void findPassForm(@RequestParam(value = "userEmail") String userEmail,
-			@RequestParam(value = "userPass") String userPass, Model model) throws Exception {
+	public void findPassForm(
+			@RequestParam(value = "userEmail") String userEmail,
+			@RequestParam(value = "userPass") String userPass, 
+			Model model) throws Exception {
 		User user = new User();
 		user.setUserEmail(userEmail);
 		user.setUserPass(userPass);
@@ -337,13 +319,11 @@ public class UserController {
 
 	// 비밀번호 수정 - 버튼
 	@RequestMapping("/passUpdate.do")
-	public String paddUpdate(User u) {
-		System.out.println("passUpdate.do");
+	public String passUpdate(User u) {
 		User user = service.selectUserInfoByName(u.getUserEmail());
-		if(u.getUserType() == 0) {
+		if(user.getUserType() == 3) {
 			return "redirect:/main.do";
 		}
-		System.out.println(u.getUserPass());
 		user.setUserPass(encoder.encode(u.getUserPass()));
 		service.updateUser(user);
 		return "redirect:/main.do";

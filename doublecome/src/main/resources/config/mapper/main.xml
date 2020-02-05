@@ -35,7 +35,7 @@
 	</select>
 	
 	<select id="selectOnAirAuction" resultType="Auction">
-	select distinct
+		select distinct
 			a.auction_no,
 			a.auction_title,
 			a.auction_reg_date,
@@ -57,9 +57,8 @@
 		   on a.auction_no = b.auction_no
 	    inner join file f
 		   on a.file_group_code = f.file_group_code
-		where auction_condition = 1
-		  and auction_broadcast = 2
-		order by bid_cnt desc
+ 		 where auction_broadcast = 2
+   		   and auction_condition = 1 
 	</select>
 	
 </mapper>

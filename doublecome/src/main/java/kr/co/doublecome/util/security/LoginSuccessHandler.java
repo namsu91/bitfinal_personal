@@ -21,6 +21,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 					throws IOException, ServletException {
 		Collection<? extends GrantedAuthority> list = authentication.getAuthorities();
 		for (GrantedAuthority auth : list) {
+			System.out.println(auth.getAuthority() + "<< auth.getAuthority()");
 			if(auth.getAuthority() == "ROLE_A") {
 				response.sendRedirect(request.getContextPath() + "/admin/basic.do");
 				return;

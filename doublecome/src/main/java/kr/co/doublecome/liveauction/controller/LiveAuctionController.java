@@ -23,15 +23,13 @@ public class LiveAuctionController {
 	
 
 	@RequestMapping(value="/broadcast.do", method=RequestMethod.POST)
-	public String broadcast(int auctionNo, String type, HttpSession session, Model model) {
+	public String broadcast(int auctionNo, String type, Model model) {
 		Auction auction = service.retrieveAuction(auctionNo);
 		if(auction.getAuctionBroadcast() == 1) {
 			return "liveAuction/notExist";
 		}
-		session.setAttribute("auctionNo", auctionNo);
 		model.addAttribute("auction",service.retrieveAuction(auctionNo));
 		model.addAttribute("type",type);
-		System.out.println(type);
 		return "liveAuction/broadcast";
 	}
 	

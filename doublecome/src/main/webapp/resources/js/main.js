@@ -1,7 +1,6 @@
 //방송 컨텐츠 클릭시 함수
 $(".onAir").click((e)=>{
 	e.preventDefault();
-	console.log($(e.target))
 	submit($(e.target).closest("a"));
 })
 

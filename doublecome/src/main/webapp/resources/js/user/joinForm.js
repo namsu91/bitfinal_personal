@@ -2,11 +2,10 @@ jQuery.ajaxSetup({cache:false});
 
 function avtiveBtn() {
   if($('input').val() !== "")
-  $('#joinBtn').attr( 'disabled', false )
+  $('form').attr( 'action', 'insert.do' )
 }
-
 function inAvtiveBtn() {
-  $('#joinBtn').attr( 'disabled', true )
+	$('form').attr( 'action', '' )
 }
 
 function nullCheck() {
@@ -15,10 +14,8 @@ function nullCheck() {
   if( $('#userPassConfirm').val()==""){  $('#userPassConfirm').next().text('비밀 번호를 한번더 입력하세요.'); return false; }
   if( $('#userPhnum').val()==""){  $('#userPhnum').next().text('핸드폰 번호를 입력하세요.'); return false; }
   if( $('#userNickname').val()==""){  $('#userNickname').next().text('별명을 입력하세요.'); return false; }
-
   return true;
 }
-
 function uniqueCheck(url, val) {
   let r = 0;
   $.ajax({
@@ -33,7 +30,6 @@ function uniqueCheck(url, val) {
                           r = result;
                         }
   })
-
   return r;
 };
 
@@ -45,14 +41,11 @@ inAvtiveBtn();
 
 $('#userEmail').keyup( (e) => {
     let emailRule = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;//이메일 정규식
-    
     if(!emailRule.test($("input[id='userEmail']").val()) ) {            
-      //경고
-      $('#userEmail').next().text('잘못된 이메일 형식입니다.');
+      $('#userEmail').next().text('잘못된 이메일 형식입니다.');//경고
       inAvtiveBtn();
       console.log($("input[id='userEmail']").val() ,'email.val()')
       console.log(uniqueCheck("/doublecome/user/checkEmail.do", $("input[id='userEmail']").val()));
-      
     }else if( uniqueCheck("/doublecome/user/checkEmail.do", $("input[id='userEmail']").val() ) == 1) {
       $('#userEmail').next().text('이미 등록된 이메일입니다.'); inAvtiveBtn();
     }else { $('#userEmail').next().text(""); avtiveBtn(); }
@@ -60,17 +53,15 @@ $('#userEmail').keyup( (e) => {
   
   $('#userPhnum').keyup( (e) => {
     let phnumRule = /^\d{3}\d{3,4}\d{4}$/;// 핸드폰 번호 정규식
-    
     if(!phnumRule.test($("input[id='userPhnum']").val()) ) {            
-    //경고
-      $('#userPhnum').next().text('잘못된 번호 형식입니다.');
+      $('#userPhnum').next().text('잘못된 번호 형식입니다.');//경고
       inAvtiveBtn();          
     }else if(uniqueCheck("/doublecome/user/checkPhnum.do", $("input[id='userPhnum']").val()) == 1) {
       $('#userPhnum').next().text('이미 등록된 번호입니다.');
       inAvtiveBtn();
     }else { $('#userPhnum').next().text(""); avtiveBtn(); }
 
-});
+  });
 
 
 

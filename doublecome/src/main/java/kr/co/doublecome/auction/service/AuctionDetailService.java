@@ -1,6 +1,5 @@
 package kr.co.doublecome.auction.service;
 
-import java.security.Principal;
 import java.util.List;
 
 import kr.co.doublecome.repository.vo.AjaxPage;
@@ -9,7 +8,6 @@ import kr.co.doublecome.repository.vo.Category;
 import kr.co.doublecome.repository.vo.Deal;
 import kr.co.doublecome.repository.vo.History;
 import kr.co.doublecome.repository.vo.Inquiry;
-import kr.co.doublecome.repository.vo.Report;
 import kr.co.doublecome.repository.vo.Review;
 import kr.co.doublecome.repository.vo.Search;
 import kr.co.doublecome.repository.vo.UtilFile;
@@ -38,5 +36,4 @@ public interface AuctionDetailService {
 	String selectPhNum(int no);
 	void tempFile(String string);
 	void addTag(UtilFile file);
-	int checkReport(int no, Principal p);
 }

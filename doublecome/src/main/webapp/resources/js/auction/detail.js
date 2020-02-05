@@ -1,9 +1,7 @@
 let rPageNo = 1; //판매자 후기
-let fileNo; //파일슬라이드
 let reviewCnt = 0;
-let limit = new Date(limitTime) //해당글 리밋시간체크
-let now = new Date() 
-limit.setHours(limit.getHours() + 12)
+let limit = new Date($('.counter-class').data('date'));
+let now = new Date($('.counter-class').data('now')) 
 //해당글 리밋시간 지날시 모든이벤트 off
 $(document).ready(() => {
 	if(limit.getTime() < now.getTime()) {
@@ -485,9 +483,8 @@ $(document).on("click", ".InquiryBtn", () => {
 	}
 })
 
-$(".swiper-wrapper").on("click", (e) => {
-	fileNo = $(".swiper-slide-active").data("no")
-	$(`.${fileNo}`).addClass("active");
+$(".swiper-wrapper").on("click", () => {
+	$(".carousel-inner .item:nth-child(1)").addClass("active");
 	$(".modal").show();
 })
 $(".tagCancel").click(() => {

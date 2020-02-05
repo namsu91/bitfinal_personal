@@ -29,7 +29,7 @@ public class MyBatisUserDetailsService implements UserDetailsService {
 		List<SimpleGrantedAuthority> list = new ArrayList<>();
 		
 		list.add(new SimpleGrantedAuthority("ROLE_U"));
-		if(vo.getUserType() == 2) {
+		if(vo.getUserType() == 2) {//관리자의 유저타입 : 2
 			list.add(new SimpleGrantedAuthority("ROLE_A"));
 		}
 		

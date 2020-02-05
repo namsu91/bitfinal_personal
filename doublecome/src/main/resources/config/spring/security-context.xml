@@ -46,9 +46,11 @@
 		                    <!--  authentication-failure-handler-ref="loginFailureHandler" --> 
 		                 
 		                 
-	<!-- <security:session-management invalid-session-url="/main.do">
+	<security:session-management invalid-session-url="/main.do">
+	<!-- 
         <security:concurrency-control max-sessions="1" expired-url="/main.do" error-if-maximum-exceeded="true"/>
-    </security:session-management> -->
+     -->
+    </security:session-management>
 
 
 

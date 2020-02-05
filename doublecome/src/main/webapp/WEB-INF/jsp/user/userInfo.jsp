@@ -51,33 +51,33 @@
 			
 			<div id="infoContainer">
 	    	<h1 id="userInfoTitle" >마이 페이지</h1>
-	    	<table>
+	    	<table id='table'>
 	    	<tbody>
 	    	<tr>
-	    		<th>이메일</th>
-	    		<td>
+	    		<th id='th'>이메일</th>
+	    		<td id='td'>
 	    		<i class="far fa-envelope fa-1x" id="icon"></i>
 				<span id="email"  >${user.userEmail}</span>
 	    		</td>
 	    	</tr>
 	    	<tr>
-	    		<th>핸드폰 번호</th>
-	    		<td>
+	    		<th id='th'>핸드폰 번호</th>
+	    		<td id='td'>
 	    		 <i class="fas fa-mobile-alt fa-1x" id="icon"></i>
 	    		<span id="phnum" >${user.userPhnum}</span>
 	    		</td>
 	    	</tr>
 	    	<tr>
-	    		<th>별명</th>
-	    		<td>
+	    		<th id='th'>별명</th>
+	    		<td id='td'>
 	    		<i class="fas fa-user fa-1x" id="icon"></i>
 	    		<span id="nickname"  >${user.userNickname}</span>
 	    		</td>
 	    	</tr>
 	    	<%-- <c:if test="${user.userEmail.length() < 30} "> 
 			<tr>
-	    		<th>비밀번호</th>
-	    		<td>
+	    		<th id='th'>비밀번호</th>
+	    		<td id='td'>
 	    		<i class="fas fa-unlock-alt fa-1x" id="icon"></i>
 	    		<input id="registInput" class="registInput" name="userPass" type="password" placeholder="비밀번호">
 	    		</td>
@@ -101,4 +101,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 	<script src="<c:url value="/resources/js/user/userInfo.js" />" ></script>
 </body>
+<footer>
+<c:import url="/WEB-INF/jsp/include/footer.jsp" />
+</footer>
 </html>

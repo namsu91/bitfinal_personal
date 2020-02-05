@@ -59,11 +59,11 @@
 			
 			<div id="infoContainer">
 	    	<h1 id="userInfoTitle" >회원 정보 수정</h1>
-	    	<table>
+	    	<table id='table'>
 	    	<tbody>
 	    	<tr>
-	    		<th>이메일</th>
-	    		<td>
+	    		<th id ='th'>이메일</th>
+	    		<td id='td'>
 	    		<i class="far fa-envelope fa-1x" id="icon"></i>
 				<input id="userEmail" name="userEmail" type="text" value="${user.userEmail}" class="registInput"
 						placeholder="${user.userEmail}" readonly/>
@@ -71,8 +71,8 @@
 	    		</td>
 	    	</tr>
 	    	<tr>
-	    		<th>핸드폰 번호</th>
-	    		<td>
+	    		<th id ='th'>핸드폰 번호</th>
+	    		<td id='td'>
 	    		 <i class="fas fa-mobile-alt fa-1x" id="icon"></i>
 	    		<input id="userPhnum" name="userPhnum" type="text" class="registInput" value="${user.userPhnum}"
 	    				placeholder="${user.userPhnum}" />
@@ -80,8 +80,8 @@
 	    		</td>
 	    	</tr>
 	    	<tr>
-	    		<th>별명</th>
-	    		<td>
+	    		<th id ='th'>별명</th>
+	    		<td id='td'>
 	    		<i class="fas fa-user fa-1x" id="icon"></i>
 	    		<input id="userNickname" name="userNickname" type="text" value="${user.userNickname}" placeholder="${user.userNickname}"  class="registInput">
 						<div id="alert"></div>
@@ -93,8 +93,8 @@
 	    	</c:when>
 	    	<c:otherwise>
 			<tr>
-	    		<th>비밀번호</th>
-	    		<td>
+	    		<th id ='th'>비밀번호</th>
+	    		<td id='td'>
 	    		<i class="fas fa-unlock-alt fa-1x" id="icon"></i>
 	    		<input id="userPass" name="userPass" type="password" value="" placeholder="비밀번호"  class="registInput">
 	    		<input id="userPassConfirm" name="userPassConfirm" type="password" placeholder="비밀번호 확인" class="registInput">
@@ -115,6 +115,9 @@
 </div>
 </div> 
 </section>
+<footer>
+<c:import url="/WEB-INF/jsp/include/footer.jsp" />
+</footer>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
 	<script src="<c:url value="/resources/js/user/userInfoUpdate.js" />" ></script>
 </body>

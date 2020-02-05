@@ -147,17 +147,6 @@ footer {
     text-shadow: 1px 1px 1px #9E3F3F;
     cursor: pointer;
 }
-.alreadyReport {
-	float: right;
-    background: #B6B6B6;
-    border: none;
-    padding: 6px 15px 6px 15px;
-    color: #FFF;
-    box-shadow: 1px 1px 5px #B6B6B6;
-    border-radius: 3px;
-    text-shadow: 1px 1px 1px #9E3F3F;
-    cursor: not-allowed;
-}
 .writer_btn:hover, .InquiryUpdateCompleteBtn:hover, .InquiryUpdateCancelBtn:hover, .bidModalBtn:hover {
     background: #FF3B58;
     color: white;

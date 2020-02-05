@@ -21,7 +21,6 @@
 				<div class="swiper-wrapper">
 					<c:forEach items="${file}" var="f">
 						<div class="swiper-slide"
-						data-no="${f.fileNo}"
 							style="background-image: url('<c:url value="/file/downLoadFile.do?fileNo=${f.fileNo}" />')"></div>
 					</c:forEach>
 				</div>
@@ -33,7 +32,6 @@
 					<div class="swiper-wrapper">
 						<c:forEach items="${file}" var="f">
 							<div class="swiper-slide"
-								data-no="${f.fileNo}"
 								style="background-image: url('<c:url value="/file/downLoadFile.do?fileNo=${f.fileNo}" />')">
 							</div>
 						</c:forEach>
@@ -66,7 +64,7 @@
 													<c:set var="now" value="<%=new java.util.Date()%>" />
 														<div class="counter-class"
 															data-date="<fmt:formatDate value="${auction.auctionLimitDate}" pattern="yyyy-MM-dd HH:mm:ss"/>"
-															data-endDate="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>">
+															data-now="<fmt:formatDate value="${now}" pattern="yyyy-MM-dd HH:mm:ss"/>">
 															<div class="timer-font">
 																<span class="counter-days"></span> 일
 															</div>
@@ -273,7 +271,7 @@
 		<div id="carousel-example" class="carousel slide">
 			<div class="carousel-inner">
 				<c:forEach items="${file}" var="f">
-					<div class="item ${f.fileNo}">
+					<div class="item">
 					<button type="button" class="tagCancel">닫기</button>
 						<div class="imgtempWrapper">
 							<div class="imgWrapper">
@@ -281,7 +279,7 @@
 									src="<c:url value="/file/downLoadFile.do?fileNo=${f.fileNo}" />"></a>
 								<c:forEach items="${tag}" var="t">
 								<c:if test="${f.fileNo eq t.fileNo}">
-								<div class="tagTextBox" style="top: ${t.tagXCor}%; left: ${t.tagYCor}%;">
+								<div class="tagTextBox" style="top: ${t.tagYCor}%; left: ${t.tagXCor}%;">
 									${t.tagContent}
 								</div>
 								</c:if>

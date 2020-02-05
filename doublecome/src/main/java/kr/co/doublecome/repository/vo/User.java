@@ -1,11 +1,12 @@
 package kr.co.doublecome.repository.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
 
 @Data	
-public class User {
+public class User implements Serializable{
 	private Boolean isSNS = false;			// API 로그인 여부
 	private String userEmail;				// 사용자 이메일	
 	private String userPass;				// 사용자 비밀번호

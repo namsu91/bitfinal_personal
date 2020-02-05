@@ -96,7 +96,6 @@
 	    		if ($(value).attr("count") == 0) {
 	    			$(value).addClass("hideCount");	
 	    		}    		
-	    	console.log("함수왔음")
 	    	})    		
     	}
     	checkCount();

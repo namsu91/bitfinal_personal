@@ -49,7 +49,6 @@
      	<a id="custom-login-btn" href="javascript:loginWithKakao()">
 		<img src="//mud-kage.kakao.com/14/dn/btqbjxsO6vP/KPiGpdnsubSq3a0PHEGUK1/o.jpg" width="240"/>
 		</a>
-		
     </form>
   </div>
   
@@ -58,7 +57,6 @@
         
 </body>
 <script type='text/javascript'>
-  
     //<![CDATA[
     // 사용할 앱의 JavaScript 키를 설정해 주세요.
     Kakao.init('4a6f90228eff30166282d77c92a87ee5');
@@ -92,14 +90,10 @@
 		                else if(result === 1)
 		                location.href='/doublecome/main.do';
 	                }
-                	
                 }
-                
               })
-    }
-
-  })
-
+    		}
+  			})
           },
           fail: function(err) {
             console.log(JSON.stringify(err));
@@ -107,6 +101,8 @@
         });
       };
   //]]>
+    
+    
 </script>
 <script src="<c:url value="/resources/js/user/loginForm.js" />"></script>
 </html>
