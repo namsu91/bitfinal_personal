@@ -12,7 +12,7 @@
 
 
 	<properties>
-		<spring.version>5.2.1.RELEASE</spring.version>
+		<spring.version>5.2.11.RELEASE</spring.version>
 		<jacksion.version>2.10.1</jacksion.version>
 	</properties>
 
